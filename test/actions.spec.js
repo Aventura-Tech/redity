@@ -9,31 +9,37 @@ const data = {
 
 describe('Actions: contructor', () => {
   it('Instance', () => {
-    expect(() => new Actions()).toThrow(IsNotObject('Actions parameter'))
-    expect(() => new Actions('Example')).toThrow(IsNotObject('Actions parameter'))
-    expect(() => new Actions([])).toThrow(IsNotObject('Actions parameter'))
+    const actions = new Actions()
+    expect(() => actions.init()).toThrow(IsNotObject('Actions parameter'))
+    expect(() => actions.init('Example')).toThrow(IsNotObject('Actions parameter'))
+    expect(() => actions.init([])).toThrow(IsNotObject('Actions parameter'))
   })
 
   it('has', () => {
-    const actions = new Actions(data)
+    const actions = new Actions()
+    actions.init(data)
+    expect(actions).toHaveProperty('init')
     expect(actions).toHaveProperty('onListen')
     expect(actions).toHaveProperty('size')
-    expect(actions).toHaveProperty('get')
+    expect(actions).toHaveProperty('toMethod')
   })
 
   it('Property', () => {
-    const actions = new Actions(data)
+    const actions = new Actions()
+    actions.init(data)
     const propAndMethods = {
+      init: expect.any(Function),
       onListen: undefined,
       size: expect.any(Number),
-      get: expect.any(Function)
+      toMethod: expect.any(Function)
     }
     expect(actions).toMatchObject(propAndMethods)
   })
 })
 
-describe('Actions: Errors', () => {
-  const actions = new Actions(data)
+describe('Actions: Logic', () => {
+  const actions = new Actions()
+  actions.init(data)
   it('Listener on', () => {
     expect(() => {
       actions.onListen = 'String'
@@ -51,8 +57,9 @@ describe('Actions: Errors', () => {
 })
 
 describe('Actions: Concept', () => {
-  it('on', done => {
-    const actions = new Actions(data)
+  it('Creating and success', done => {
+    const actions = new Actions()
+    actions.init(data)
     expect(actions.size).toBe(3)
     let countListen = 0
     actions.onListen = function (payload, action) {
@@ -64,7 +71,7 @@ describe('Actions: Concept', () => {
       countListen++
     }
 
-    const listActions = actions.get()
+    const listActions = actions.toMethod()
     expect(listActions).toMatchObject({
       action1: expect.any(Function),
       action2: expect.any(Function),

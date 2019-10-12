@@ -1,31 +1,110 @@
 import React from 'react'
 
+import { RequireKeyModel, IsNotComponent, ModelNotFound } from '../utils/exceptions'
+import { symRedityGetModel } from '../utils/symbols'
+import Redity from '../index'
+import Subscriber from '../subscriber'
+
 /**
  * Connect a component with the model
  * @param {string} modelKey Key of Model
  * @param {object} mapStateActionToProps options
  * @returns {funtion}
  */
-export default function (modelKey, mapStateActionToProps = false) {
-  if (typeof modelKey !== 'string') throw new Error('Require the model key')
+export default function (modelKey, mapStateToProps = () => {}, mapActionToProps = () => {}) {
+  // ====================================== //
+  // If not string is fatal error           //
+  // ====================================== //
+  if (typeof modelKey !== 'string') throw RequireKeyModel('connect')
 
-  return Component => {
-    if (!Component) throw new Error('Requiere a Componente')
+  // ====================================== //
+  // Getting model by key                   //
+  // ====================================== //
+  const Model = Redity[symRedityGetModel](modelKey)
+  // ====================================== //
+  // If not found model fatal error         //
+  // ====================================== //
+  if (!Model) throw ModelNotFound('connect')
+
+  // ====================================== //
+  // Next function for component and his    //
+  // key (optional)                         //
+  // ====================================== //
+  return (Component, customizeKeyComponent = false) => {
+    // ====================================== //
+    // If not component or null               //
+    // ====================================== //
+    if (!Component) throw IsNotComponent('connect')
+
+    // ====================================== //
+    // Seting all actions defined in init to  //
+    // mapStateToProps and getting the        //
+    // actions defined                        //
+    // ====================================== //
+    const actionsDefined = mapActionToProps(Model.actions)
+
+    // ====================================== //
+    // declared Subcriber, and his key        //
+    // ====================================== //
+    let subscriber, keyConnect
+    // ====================================== //
+    // States customized                      //
+    // ====================================== //
+    let statesDefinedToProps
+    // ====================================== //
+    // Wrapper component connected            //
+    // ====================================== //
     return class Wrapper extends React.Component {
       constructor (props) {
         super(props)
-        this.state = {
+        // ====================================== //
+        // Creating subscriber for manage states  //
+        // ====================================== //
+        subscriber = new Subscriber(customizeKeyComponent, mapStateToProps)
+        // ====================================== //
+        // Seting props for render                //
+        // ====================================== //
+        subscriber.setProps(this.props)
+        // ====================================== //
+        // Sending subscriber to Model            //
+        // ====================================== //
+        keyConnect = Model.subscribe(subscriber)
+        // ====================================== //
+        // Getting states customize for user      //
+        // ====================================== //
+        statesDefinedToProps = subscriber.getStatesDefined()
+      }
 
+      componentWillMount () {
+        // ====================================== //
+        // Listen changes of states               //
+        // ====================================== //
+        this.subscriber.onListen = states => {
+          statesDefinedToProps = states
+          // ====================================== //
+          // Force Render                           //
+          // ====================================== //
+          this.forceUpdate()
         }
-        // this.forceUpdate()
       }
 
       componentWillUnmount () {
-
+        // ====================================== //
+        // If component destroy, deleting         //
+        // subscriber                             //
+        // ====================================== //
+        Model.deleteSubscribe(keyConnect)
       }
 
       render () {
-        return <Component {...this.props} />
+        // ====================================== //
+        // Seting props for render                //
+        // ====================================== //
+        subscriber.setProps(this.props)
+        // ====================================== //
+        // Render                                 //
+        // ====================================== //
+        return (<Component {...actionsDefined} {...statesDefinedToProps} {...this.props} />)
       }
     }
   }

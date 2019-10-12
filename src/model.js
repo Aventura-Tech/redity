@@ -1,49 +1,65 @@
 /* eslint-disable accessor-pairs */
-import { symModelCreate } from './utils/symbols'
+import { symModelCreate, symSubscriberGenerate, symSubscriberInit } from './utils/symbols'
 import Exceptions from './utils/exceptions'
 
 import { PRIVATE } from './utils/mode'
 import States from './states'
 import Actions from './actions'
+import BlockCode from './blockcode'
+import Subscriber from './subscriber'
 
 const { IsNotObject } = Exceptions
 
-export default function () {
+/**
+ * Model Class
+ * @param {string} key Key Primary
+ */
+export default function (key = null) {
   // ====================================== //
   // PRIVATE PROPERTY                       //
   // ====================================== //
 
   let config = {
-    mode: PRIVATE
+    access: PRIVATE,
+    dev: true
   }
-  let listener = false
-  let fail = false
-  let initial = false
-  let states = false
-  let actions = false
+  let listener = async () => {}
+  let fail = async () => {}
+  let initial = () => {}
+  const states = new States()
+  const actions = new Actions()
   const subcribes = new Map()
+
   // ====================================== //
   // PUBLIC PROPERTY                        //
   // ====================================== //
-
+  Object.defineProperty(this, 'key', {
+    value: key,
+    enumerable: true,
+    configurable: false,
+    writable: false
+  })
+  // ====================================== //
+  // Return list methods of states          //
+  // ====================================== //
   Object.defineProperty(this, 'states', {
-    get: () => {
-      if (!states) return false
-      return states.toMethod()
-    },
+    get: () => states.toMethod(),
     enumerable: true,
     configurable: false
   })
 
+  // ====================================== //
+  // Return list methods of actions         //
+  // ====================================== //
   Object.defineProperty(this, 'actions', {
-    get: () => {
-      if (!actions) return false
-      return actions.get()
-    },
+    get: () => actions.toMethod(),
     enumerable: true,
     configurable: false
   })
 
+  // ====================================== //
+  // Initial data for the model             //
+  // ====================================== //
   Object.defineProperty(this, 'init', {
     /**
      * Initicial states, actions and configuration
@@ -56,6 +72,10 @@ export default function () {
     configurable: false
   })
 
+  // ====================================== //
+  // Captura el evento de las actiones      //
+  // ejecutadas                             //
+  // ====================================== //
   Object.defineProperty(this, 'onListen', {
     /**
      * For the events of actions
@@ -68,6 +88,10 @@ export default function () {
     configurable: false
   })
 
+  // ====================================== //
+  // Captura los fails generadas en el      //
+  // prop onListen                          //
+  // ====================================== //
   Object.defineProperty(this, 'onFail', {
     /**
      * For the fails of the actions
@@ -87,14 +111,14 @@ export default function () {
   Object.defineProperties(initialProperties, {
     states: {
       set: data => {
-        states = new States(data)
+        states.init(data)
       },
       enumerable: true,
       configurable: false
     },
     actions: {
       set: data => {
-        actions = new Actions(data)
+        actions.init(data)
       },
       enumerable: true,
       configurable: false
@@ -110,47 +134,116 @@ export default function () {
   })
 
   // ====================================== //
-  // METHODS PUBLICS                        //
+  // METHODS PRIVATE                        //
   // ====================================== //
-  this[symModelCreate] = () => {
-    if (!initial) throw new Error('Require a init')
-    initial(
-      initialProperties.states,
-      initialProperties.actions,
-      initialProperties.configurable
-    )
+  this[symModelCreate] = (development = true) => {
+    const dev = development ? config.dev : false
+    initial(initialProperties)
 
-    if (states) {
-      states.onListen = () => {
-        for (const subscribed of subcribes.entries()) {
-          subscribed[1].callback()
-        }
+    // ====================================== //
+    // Listen changes values of States        //
+    // ====================================== //
+    states.onListen = (key, payload) => {
+      for (const subscribed of subcribes.entries()) {
+        subscribed[1][symSubscriberGenerate](key, payload)
       }
     }
 
-    if (actions && listener) {
-      actions.onListen = () => {
-        listener().catch(err => {
-          fail(err)
-        })
+    // ====================================== //
+    // Listen events by actions               //
+    // ====================================== //
+    actions.onListen = (payload, headerAction, actionsEvent) => {
+      const components = {}
+      for (const [key, subscribed] of subcribes.entries()) {
+        components[key] = {
+          props: subscribed.props,
+          hide: () => {},
+          unhide: () => {},
+          replace: () => {}
+        }
       }
+      // ====================================== //
+      // Struturing header for onListen and     //
+      // onFail                                 //
+      // ====================================== //
+      const header = {
+        key: this.key,
+        actions: actions.toMethod(),
+        payload,
+        wait: () => {},
+        proceed: () => {},
+        event: headerAction.key,
+        events: actionsEvent,
+        models: {},
+        history: [],
+        components: Object.freeze(components),
+        // ====================================== //
+        // Creating new blockcode for debug and   //
+        // for help in case errors of event       //
+        // ====================================== //
+        blockcode: new BlockCode(dev)
+      }
+
+      header.resolve = async (err) => {
+        header.blockcode.catch()
+        const res = await fail(err, header, states.toMethod())
+        return res
+      }
+      Object.freeze(header)
+      // ====================================== //
+      // Stating blockcode for create blocks in //
+      // the onListen of Model                  //
+      // ====================================== //
+      header.blockcode.start(headerAction.key, payload)
+      return new Promise(resolve => {
+        // ====================================== //
+        // Execute event for onListen             //
+        // ====================================== //
+        listener(payload, header, states.toMethod()).then(async res => {
+        // ====================================== //
+        // If success then finished blockcode and //
+        // also current action                    //
+        // ====================================== //
+          header.blockcode.end()
+          resolve(true)
+        // ====================================== //
+        // If case the event if fail              //
+        // ====================================== //
+        }).catch(async err => {
+          // ====================================== //
+          // Catch current block                    //
+          // ====================================== //
+          header.blockcode.catch()
+          // ====================================== //
+          // Execute event for onFail and sending   //
+          // information necesary                   //
+          // ====================================== //
+          await fail(err, header, states.toMethod())
+          // ====================================== //
+          // If success then finished blockcode and //
+          // also current action                    //
+          // ====================================== //
+          header.blockcode.end()
+          resolve(true)
+        })
+      })
     }
   }
 
+  // ====================================== //
+  // METHODS PUBLICS                        //
+  // ====================================== //
   /**
    * Subcribes
    * @param {Array} listenStates
    * @param {function} callback
    * @returns {number}
    */
-  this.subscribe = (listenStates, callback) => {
-    const key = parseInt(Date.now() / 9000000) + subcribes.size
-    subcribes.set(key, {
-      key,
-      listenStates,
-      callback
-    })
-    return key
+  this.subscribe = subscriber => {
+    if (!(subscriber instanceof Subscriber)) throw new Error('Require a instance of Subscriber')
+    subscriber[symSubscriberInit](states.get())
+    subcribes.set(subscriber.key, subscriber)
+    return subscriber.key
   }
 
   this.deleteSubscribe = key => {

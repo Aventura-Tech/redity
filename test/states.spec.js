@@ -6,16 +6,19 @@ const data = {
   moreStates: {}
 }
 
-describe('Testing to Instance States', () => {
-  it('Expect creating Instance', () => {
-    expect(() => new States('Example')).toThrow(Error)
-    expect(() => new States([])).toThrow(Error)
-    expect(new States().size).toBe(0)
+describe('States: initial', () => {
+  it('Set data for states', () => {
+    const states = new States()
+    expect(() => states.init('Example')).toThrow(Error)
+    expect(() => states.init([])).toThrow(Error)
+    states.init({})
+    expect(states.size).toBe(0)
   })
 })
 
 describe('Creating States', () => {
-  const states = new States(data)
+  const states = new States()
+  states.init(data)
 
   it('Expect registers property', () => {
     expect(states.size).toBe(3)
@@ -60,7 +63,8 @@ describe('Expecting values states creating', () => {
   }
   const newDataArr = ['Apple', 'Banana']
 
-  const states = new States(data)
+  const states = new States()
+  states.init(data)
   const { aState, otherState, moreStates } = states.get()
   const statesFun = states.toMethod()
 
@@ -101,7 +105,8 @@ describe('Expecting values states creating', () => {
 })
 
 describe('Expecting Events of the events', () => {
-  const states = new States(data)
+  const states = new States()
+  states.init(data)
   const toBe = [
     ['aState', 15],
     ['otherState', true],

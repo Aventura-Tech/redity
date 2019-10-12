@@ -58,12 +58,14 @@ export default function (dev = true) {
 
   Object.defineProperty(this, 'num', {
     get: () => index + 1,
-    configurable: false
+    configurable: false,
+    enumerable: true
   })
 
   Object.defineProperty(this, 'sizeDone', {
     get: () => blocks.size,
-    configurable: false
+    configurable: false,
+    enumerable: true
   })
 
   // ====================================== //
@@ -172,10 +174,11 @@ export default function (dev = true) {
   this.catch = (info = null) => {
     if (finished) throw Exception.IsFinished()
     if (!started) throw Exception.NotStarted()
-    if (!blockCurrent) throw Exception.BlockNotFound()
+    if (!blockCurrent) return false
     if (!catchAgain) throw Exception.CatchAgain()
     this[symBCSetBlock](this.Status.FAIL, info)
     catchAgain = false
+    return true
   }
 
   /**

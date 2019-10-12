@@ -81,8 +81,17 @@ describe('Blockcode: Errors', () => {
   it('Catch and Resolve Block', () => {
     const blockCode = new BlockCode(false)
     blockCode.start()
-    expect(() => blockCode.catch()).toThrow(errBlockNotFound)
+    expect(blockCode.catch()).toBeFalsy()
     expect(() => blockCode.resolve()).toThrow(errBlockNotFound)
+  })
+
+  it('Catch a single block', () => {
+    const blockCode = new BlockCode(false)
+    blockCode.start()
+    blockCode.block('A description')
+    expect(blockCode.catch()).toBeTruthy()
+    expect(blockCode.num).toBe(1)
+    blockCode.end()
   })
 
   it('One more catch', () => {
