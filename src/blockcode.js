@@ -96,8 +96,8 @@ export default function (dev = true) {
         log = Log.error
     }
     log({
-      label: `Block - #${status}`,
-      message: 'done',
+      label: `Block - ${status}`,
+      message: blockCurrent.description,
       data: blockCurrent
     })
   }
@@ -196,7 +196,7 @@ export default function (dev = true) {
     blocks.set(blockCurrent.id, { ...blockCurrent })
     if (this._dev && !hide) {
       Log.warn({
-        label: `Block - #${this.Status.RESOLVED}`,
+        label: `Block - ${this.Status.RESOLVED}`,
         message: 'has been resolved',
         data: blockCurrent
       })

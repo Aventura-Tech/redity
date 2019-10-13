@@ -104,7 +104,7 @@ describe('Log: Public Methods', () => {
   })
 
   it('Call warn log', () => {
-    const spy = jest.spyOn(console, 'warn')
+    const spy = jest.spyOn(console, 'log')
     Log.warn(bodyTest)
     Log.warn(bodyTest2)
     Log.warn(bodyTest3)
@@ -113,7 +113,7 @@ describe('Log: Public Methods', () => {
   })
 
   it('Call error log', () => {
-    const spy = jest.spyOn(console, 'error')
+    const spy = jest.spyOn(console, 'log')
     Log.error(bodyTest)
     Log.error(bodyTest2)
     Log.error(bodyTest3)

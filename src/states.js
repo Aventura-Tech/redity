@@ -73,8 +73,8 @@ Object.defineProperty(States.prototype, 'onListen', {
 */
 States.prototype.get = function () {
   const statesRegistered = {}
-  for (const [key, value] of this[symStatesRegisters].entries()) {
-    statesRegistered[key] = value
+  for (const [key, state] of this[symStatesRegisters].entries()) {
+    statesRegistered[key] = state
   }
   return statesRegistered
 }

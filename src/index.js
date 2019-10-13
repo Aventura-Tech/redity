@@ -4,7 +4,7 @@ import Blockcode from './blockcode'
 import Model from './model'
 import connect from './hoc'
 import Subscriber from './subscriber'
-import { symRedityModels, symRedityGetModel } from './utils/symbols'
+import { symRedityModels, symRedityGetModel, symModelCreate } from './utils/symbols'
 import { IsNotFunction } from './utils/exceptions'
 /**
  * Redity class
@@ -34,8 +34,9 @@ Redity.register = (key, modelContructor) => {
   if (typeof modelContructor !== 'function') throw IsNotFunction('register')
   const model = new Model(key)
   modelContructor(model)
+  model[symModelCreate]()
   Redity[symRedityModels].set(key, model)
-  return this.register
+  return Redity.register
 }
 
 Redity[symRedityGetModel] = key => {

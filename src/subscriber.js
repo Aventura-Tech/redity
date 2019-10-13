@@ -8,16 +8,21 @@ let index = 0
 /**
  * Model Subscriber for subscribe
  * @param {string} key Key optional
+ * @param {funtion} mapStateToProps function
  */
-export default function Subscriber (key = false, mapStateToProps) {
-  if (typeof key !== 'boolean') throw new Error('Subscriber: Is not a boolean')
-  if (typeof mapStateToProps !== 'function') throw IsNotFunction('setMapStateActionToProps')
+export default function Subscriber (key = false, mapStateToProps = false) {
+  if (key !== false && typeof key !== 'string') {
+    throw new Error('Subscriber: To be a string')
+  }
+  if (typeof mapStateToProps !== 'function') {
+    this[symSubscriberMapStateToProps] = () => ({})
+  } else {
+    this[symSubscriberMapStateToProps] = mapStateToProps
+  }
   // ====================================== //
   // Generate key                           //
   // ====================================== //
   this.key = key || parseInt(Date.now() / 9000000) + index
-
-  this[symSubscriberMapStateToProps] = mapStateToProps
   this[symSubscriberListener] = () => {}
   this.statesDefined = {}
   this.allStates = {}
@@ -28,9 +33,14 @@ export default function Subscriber (key = false, mapStateToProps) {
 // ====================================== //
 // Recibirá todos los estados por Model   //
 // ====================================== //
+/** Initial subscrirber
+ * @param {object} allStates object of states
+ */
 Subscriber.prototype[symSubscriberInit] = function (allStates) {
-  this.allStates = allStates
-  const statesDefined = this[symSubscriberMapStateToProps](allStates)
+  for (const key in allStates) {
+    this.allStates[key] = allStates[key].val
+  }
+  const statesDefined = this[symSubscriberMapStateToProps](this.allStates)
   if (typeof statesDefined !== 'object' || Array.isArray(statesDefined)) throw IsNotObject('mapStateToProps')
   this.statesDefined = statesDefined
 }

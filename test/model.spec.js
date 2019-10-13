@@ -156,4 +156,46 @@ describe('Model: Concept', () => {
     expect(count).toBe(2)
     expect(countFail).toBe(1)
   })
+
+  it('Actions', async () => {
+    const model = new Model('TestingModel')
+    let wasExecuteAction1 = false
+    let wasExecuteAction2 = false
+    model.init = initial => {
+      initial.actions = {
+        action1: 'This is first action',
+        action2: 'This is other action'
+      }
+    }
+
+    await new Promise(resolve => {
+      model.onListen = async (payload, header) => {
+        const { action1, action2 } = header.events
+
+        if (header.event === 'action1') {
+          expect(action1).toEqual(expect.any(Function))
+          expect(action2).toBeFalsy()
+          wasExecuteAction1 = true
+        }
+
+        if (header.event === 'action2') {
+          expect(action1).toBeFalsy()
+          expect(action2).toEqual(expect.any(Function))
+          wasExecuteAction2 = true
+        }
+      }
+      model[symModelCreate](false) // creating model
+      const { action1, action2 } = model.actions
+      action1('Any Data').then(res => {
+        expect(res).toBeTruthy()
+        action2({ data: 'other data' }).then(res2 => {
+          expect(res2).toBeTruthy()
+          resolve(true)
+        })
+      })
+    })
+
+    expect(wasExecuteAction1).toBeTruthy()
+    expect(wasExecuteAction2).toBeTruthy()
+  })
 })

@@ -8,11 +8,11 @@ import Subscriber from '../subscriber'
 /**
  * Connect a component with the model
  * @param {string} modelKey Key of Model
- * @param {object} mapStateToProps options
+ * @param {function} mapStateToProps options
  * @param {function} mapActionToProps actions
  * @returns {funtion}
  */
-export default function (modelKey, mapStateToProps = () => {}, mapActionToProps = () => {}) {
+export default function (modelKey, mapStateToProps = false, mapActionToProps = () => {}) {
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //
@@ -47,34 +47,39 @@ export default function (modelKey, mapStateToProps = () => {}, mapActionToProps 
     // ====================================== //
     // For subcriber                          //
     // ====================================== //
-    let subscriber
+    let subscriber = false
     // ====================================== //
     // States defined for user in MapState... //
     // ====================================== //
     let statesDefinedToProps = {}
+    // ====================================== //
+    // Cuando se crea un subscribe se crea    //
+    // una key para mas luego usar para       //
+    // eliminar la subscripción despues de    //
+    // destruir el componente.                //
+    // ====================================== //
     let keyConnect = false
+    // ====================================== //
+    // For componentWillMount                 //
+    // ====================================== //
+    let started = false
     // ====================================== //
     // Wrapper component connected            //
     // ====================================== //
-    return function (props) {
+    return function Wrapper (props) {
       // ====================================== //
-      // Creting force render                   //
+      // Simulate componentWillMout of Class    //
+      // Component                              //
       // ====================================== //
-      const [nextDefinedToProps] = React.useState(1)[1]
-
-      // ====================================== //
-      // Seting props for render                //
-      // ====================================== //
-      subscriber.setProps(props)
-
-      // ====================================== //
-      // Use effect for init subscriber         //
-      // ====================================== //
-      React.useEffect(() => {
+      function componentWillMount () {
         // ====================================== //
         // Creating subscriber for manage states  //
         // ====================================== //
         subscriber = new Subscriber(customizeKeyComponent, mapStateToProps)
+        // ====================================== //
+        // Seting props for render                //
+        // ====================================== //
+        subscriber.setProps(props)
         // ====================================== //
         // Sending subscriber to Model            //
         // ====================================== //
@@ -83,7 +88,26 @@ export default function (modelKey, mapStateToProps = () => {}, mapActionToProps 
         // Getting states customize for user      //
         // ====================================== //
         statesDefinedToProps = subscriber.getStatesDefined()
+      }
 
+      if (!started) {
+        componentWillMount()
+        started = true
+      }
+
+      // ====================================== //
+      // Seting props for render                //
+      // ====================================== //
+      subscriber.setProps(props)
+      // ====================================== //
+      // Creting force render                   //
+      // ====================================== //
+      const nextDefinedToProps = React.useState(Date.now())[1]
+
+      // ====================================== //
+      // Use effect for subscriber              //
+      // ====================================== //
+      React.useEffect(() => {
         // ====================================== //
         // Listen changes of states               //
         // ====================================== //
@@ -96,6 +120,7 @@ export default function (modelKey, mapStateToProps = () => {}, mapActionToProps 
         }
         return () => {
           Model.deleteSubscribe(keyConnect)
+          started = false
         }
       }, [])
 

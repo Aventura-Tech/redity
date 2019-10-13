@@ -8,10 +8,12 @@ import Subscriber from '../subscriber'
 /**
  * Connect a component with the model
  * @param {string} modelKey Key of Model
- * @param {object} mapStateActionToProps options
+ * @param {function} mapStateToProps options
+ * @param {function} mapActionToProps options
  * @returns {funtion}
  */
-export default function (modelKey, mapStateToProps = () => {}, mapActionToProps = () => {}) {
+
+export default function (modelKey, mapStateToProps = false, mapActionToProps = () => {}) {
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //
@@ -79,7 +81,7 @@ export default function (modelKey, mapStateToProps = () => {}, mapActionToProps 
         // ====================================== //
         // Listen changes of states               //
         // ====================================== //
-        this.subscriber.onListen = states => {
+        subscriber.onListen = states => {
           statesDefinedToProps = states
           // ====================================== //
           // Force Render                           //

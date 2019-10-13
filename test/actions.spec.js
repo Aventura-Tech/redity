@@ -17,7 +17,6 @@ describe('Actions: contructor', () => {
 
   it('has', () => {
     const actions = new Actions()
-    actions.init(data)
     expect(actions).toHaveProperty('init')
     expect(actions).toHaveProperty('onListen')
     expect(actions).toHaveProperty('size')
@@ -62,12 +61,13 @@ describe('Actions: Concept', () => {
     actions.init(data)
     expect(actions.size).toBe(3)
     let countListen = 0
-    actions.onListen = function (payload, action) {
+    actions.onListen = function (payload, action, header) {
       expect(payload).toEqual(expect.anything())
       expect(action).toMatchObject({
         key: expect.any(String),
         description: expect.any(String)
       })
+      expect(header).toEqual(expect.any(Object))
       countListen++
     }
 
@@ -82,6 +82,23 @@ describe('Actions: Concept', () => {
     listActions.action1('Anything')
     listActions.action2({})
     expect(countListen).toBe(2)
+    done()
+  })
+
+  it('Checking events', done => {
+    const actions = new Actions()
+    actions.init(data)
+    actions.onListen = function (payload, action, header) {
+      expect(payload).toEqual(expect.any(Object))
+      expect(header).toMatchObject({
+        action1: false,
+        action2: expect.any(Function),
+        action3: false
+      })
+    }
+
+    const { action2 } = actions.toMethod()
+    action2({ name: 'Example' })
     done()
   })
 })

@@ -185,7 +185,7 @@ export default function (key = null) {
       }
 
       header.resolve = async (err) => {
-        header.blockcode.catch()
+        header.blockcode.catch(err)
         const res = await fail(err, header, states.toMethod())
         return res
       }
@@ -194,7 +194,7 @@ export default function (key = null) {
       // Stating blockcode for create blocks in //
       // the onListen of Model                  //
       // ====================================== //
-      header.blockcode.start(headerAction.key, payload)
+      header.blockcode.start(`Action: ${headerAction.key}`, payload)
       return new Promise(resolve => {
         // ====================================== //
         // Execute event for onListen             //
@@ -213,7 +213,7 @@ export default function (key = null) {
           // ====================================== //
           // Catch current block                    //
           // ====================================== //
-          header.blockcode.catch()
+          header.blockcode.catch(err)
           // ====================================== //
           // Execute event for onFail and sending   //
           // information necesary                   //
@@ -235,8 +235,7 @@ export default function (key = null) {
   // ====================================== //
   /**
    * Subcribes
-   * @param {Array} listenStates
-   * @param {function} callback
+   * @param {object} subscriber
    * @returns {number}
    */
   this.subscribe = subscriber => {

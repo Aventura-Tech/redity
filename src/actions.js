@@ -43,13 +43,13 @@ export default function () {
    */
   this.init = actions => {
     if (typeof actions !== 'object' || Array.isArray(actions)) throw IsNotObject('Actions parameter')
-    const stateActions = {}
 
     for (const key in actions) {
-      stateActions[key] = false
-    }
+      const stateActions = {}
 
-    for (const key in actions) {
+      for (const _key in actions) {
+        stateActions[_key] = false
+      }
       /**
        * Generate a event for this action
        * @param {any} payload Data for change to event
@@ -83,7 +83,7 @@ export default function () {
         // ====================================== //
         // Generate Event onListen and waiting    //
         // ====================================== //
-        await listener(payload, header, stateActions)
+        await listener(payload, header, { ...stateActions })
         // ====================================== //
         // befere finished event                  //
         // ====================================== //
@@ -107,6 +107,4 @@ export default function () {
     }
     return actionsToMethod
   }
-
-  // this.eve
 }

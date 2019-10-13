@@ -14,16 +14,7 @@ const Log = {
   // =========================================================================== //
   [symLogManufacture]: function (style) {
     const { label, message, data } = Log[symLogBody]
-    let log = console.log
-
-    switch (Log[symLogType]) {
-      case 'warn':
-        log = console.warn
-        break
-      case 'error':
-        log = console.error
-        break
-    }
+    const log = console.log
 
     console.groupCollapsed(`%c${label}`, style, message)
     if (Array.isArray(data)) {
@@ -64,7 +55,7 @@ const Log = {
     if (!Log[symLogVerify](body)) throw new Error('Require a Object')
     Log[symLogType] = 'info'
     Log[symLogBody] = { ...Log[symLogBody], ...body }
-    Log[symLogManufacture]('padding: 2px 5px')
+    Log[symLogManufacture]('padding: 2px 5px; border-left: 2px solid black')
   },
 
   /**
@@ -86,7 +77,7 @@ const Log = {
     if (!Log[symLogVerify](body)) throw new Error('Require a Object')
     Log[symLogType] = 'error'
     Log[symLogBody] = { ...Log[symLogBody], ...body }
-    Log[symLogManufacture]('background-color: red; color: black; padding: 2px 5px')
+    Log[symLogManufacture]('background-color: red; color: white; padding: 2px 5px')
   }
 }
 
