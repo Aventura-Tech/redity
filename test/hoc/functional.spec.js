@@ -1,5 +1,4 @@
 import connect from '../../src/hoc/functional'
-import { ModelNotFound } from '../../src/utils/exceptions'
 
 describe('Connect: contructor', () => {
   it('Is function', () => {
@@ -7,6 +6,6 @@ describe('Connect: contructor', () => {
   })
 
   it('Initial', () => {
-    expect(() => { connect('keyModelNoExist') }).toThrow(ModelNotFound('connect'))
+    expect(() => { connect('keyModelNoExist') }).toEqual(expect.any(Function))
   })
 })

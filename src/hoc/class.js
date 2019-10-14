@@ -4,6 +4,7 @@ import { RequireKeyModel, IsNotComponent, ModelNotFound } from '../utils/excepti
 import { symRedityGetModel } from '../utils/symbols'
 import Redity from '../index'
 import Subscriber from '../subscriber'
+import Template from './template'
 
 /**
  * Connect a component with the model
@@ -23,9 +24,13 @@ export default function connect (modelKey, mapStateToProps = false, mapActionToP
   // ====================================== //
   const Model = Redity[symRedityGetModel](modelKey)
   // ====================================== //
-  // If not found model fatal error         //
+  // If not found model is error            //
   // ====================================== //
-  if (!Model) throw ModelNotFound('connect')
+  if (!Model) {
+    // eslint-disable-next-line no-console
+    console.error(ModelNotFound('connect'))
+    return () => Template('error connect: Model not found in the register', 'error')
+  }
 
   // ====================================== //
   // Next function for component and his    //
