@@ -13,15 +13,10 @@ function Redity () {
 
 }
 
-Object.defineProperty(Redity, 'config', {
-  value: {
-    dev: true
-  },
-  writable: false,
-  enumerable: true,
-  configurable: false
-})
-
+Redity.config = {
+  dev: true,
+  blockcodeLog: true
+}
 Redity[symRedityModels] = new Map()
 /**
    * Register model
@@ -34,7 +29,7 @@ Redity.register = (key, modelContructor) => {
   if (typeof modelContructor !== 'function') throw IsNotFunction('register')
   const model = new Model(key)
   modelContructor(model)
-  model[symModelCreate]()
+  model[symModelCreate](Redity.config.dev)
   Redity[symRedityModels].set(key, model)
   return Redity.register
 }
