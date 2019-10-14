@@ -12,8 +12,7 @@ import Subscriber from '../subscriber'
  * @param {function} mapActionToProps options
  * @returns {funtion}
  */
-
-export default function (modelKey, mapStateToProps = false, mapActionToProps = () => {}) {
+export default function connect (modelKey, mapStateToProps = false, mapActionToProps = () => {}) {
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //

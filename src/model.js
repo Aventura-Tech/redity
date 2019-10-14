@@ -175,7 +175,8 @@ export default function (key = null) {
         event: headerAction.key,
         events: actionsEvent,
         models: {},
-        history: [],
+        history: {},
+        eventFail: false,
         components: Object.freeze(components),
         // ====================================== //
         // Creating new blockcode for debug and   //

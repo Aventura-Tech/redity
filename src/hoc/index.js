@@ -5,7 +5,7 @@ import reactFunction from './functional'
 let currentReact = false
 const [x, y, z] = React.version.split('.')
 
-if (x >= 16 && y >= 8 && z >= 0) {
+if (x > 16 || (x >= 16 && y >= 8 & z >= 0)) {
   currentReact = true
 }
 

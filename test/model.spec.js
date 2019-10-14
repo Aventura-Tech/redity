@@ -95,7 +95,8 @@ describe('Model: Concept', () => {
         blockcode: expect.any(Object),
         models: expect.any(Object),
         components: expect.any(Object),
-        history: expect.any(Array)
+        history: expect.any(Object),
+        eventFail: expect.any(Boolean)
       })
       count++
     }
