@@ -1,4 +1,4 @@
-import Actions from '../src/actions'
+import Dispatcher from '../src/dispatcher'
 import Exceptions from '../src/utils/exceptions'
 const { IsNotObject, IsNotFunction } = Exceptions
 const data = {
@@ -7,16 +7,16 @@ const data = {
   action3: 'This is last Action'
 }
 
-describe('Actions: contructor', () => {
+describe('Dispatcher: contructor', () => {
   it('Instance', () => {
-    const actions = new Actions()
-    expect(() => actions.init()).toThrow(IsNotObject('Actions parameter'))
-    expect(() => actions.init('Example')).toThrow(IsNotObject('Actions parameter'))
-    expect(() => actions.init([])).toThrow(IsNotObject('Actions parameter'))
+    const actions = new Dispatcher()
+    expect(() => actions.init()).toThrow(IsNotObject('Dispatcher parameter'))
+    expect(() => actions.init('Example')).toThrow(IsNotObject('Dispatcher parameter'))
+    expect(() => actions.init([])).toThrow(IsNotObject('Dispatcher parameter'))
   })
 
   it('has', () => {
-    const actions = new Actions()
+    const actions = new Dispatcher()
     expect(actions).toHaveProperty('init')
     expect(actions).toHaveProperty('onListen')
     expect(actions).toHaveProperty('size')
@@ -24,7 +24,7 @@ describe('Actions: contructor', () => {
   })
 
   it('Property', () => {
-    const actions = new Actions()
+    const actions = new Dispatcher()
     actions.init(data)
     const propAndMethods = {
       init: expect.any(Function),
@@ -36,8 +36,8 @@ describe('Actions: contructor', () => {
   })
 })
 
-describe('Actions: Logic', () => {
-  const actions = new Actions()
+describe('Dispatcher: Logic', () => {
+  const actions = new Dispatcher()
   actions.init(data)
   it('Listener on', () => {
     expect(() => {
@@ -55,9 +55,9 @@ describe('Actions: Logic', () => {
   })
 })
 
-describe('Actions: Concept', () => {
+describe('Dispatcher: Concept', () => {
   it('Creating and success', done => {
-    const actions = new Actions()
+    const actions = new Dispatcher()
     actions.init(data)
     expect(actions.size).toBe(3)
     let countListen = 0
@@ -71,22 +71,22 @@ describe('Actions: Concept', () => {
       countListen++
     }
 
-    const listActions = actions.toMethod()
-    expect(listActions).toMatchObject({
+    const listDispatcher = actions.toMethod()
+    expect(listDispatcher).toMatchObject({
       action1: expect.any(Function),
       action2: expect.any(Function),
       action3: expect.any(Function)
     })
-    const countList = Object.keys(listActions)
+    const countList = Object.keys(listDispatcher)
     expect(countList.length).toBe(3)
-    listActions.action1('Anything')
-    listActions.action2({})
+    listDispatcher.action1('Anything')
+    listDispatcher.action2({})
     expect(countListen).toBe(2)
     done()
   })
 
   it('Checking events', done => {
-    const actions = new Actions()
+    const actions = new Dispatcher()
     actions.init(data)
     actions.onListen = function (payload, action, header) {
       expect(payload).toEqual(expect.any(Object))

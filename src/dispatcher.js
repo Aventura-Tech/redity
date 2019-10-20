@@ -3,7 +3,7 @@ import { IsNotFunction, IsNotObject } from './utils/exceptions'
 /**
  * Actions Class
  */
-export default function () {
+export default function Dispatcher () {
   // ====================================== //
   // PRIVATE PROPERTY                       //
   // ====================================== //
@@ -42,7 +42,7 @@ export default function () {
    * @param {object} actions A list object for create actions
    */
   this.init = actions => {
-    if (typeof actions !== 'object' || Array.isArray(actions)) throw IsNotObject('Actions parameter')
+    if (typeof actions !== 'object' || Array.isArray(actions)) throw IsNotObject('Dispatcher parameter')
 
     for (const key in actions) {
       const stateActions = {}

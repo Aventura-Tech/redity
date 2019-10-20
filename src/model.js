@@ -4,7 +4,7 @@ import Exceptions from './utils/exceptions'
 
 import { PRIVATE } from './utils/mode'
 import States from './states'
-import Actions from './actions'
+import Dispatcher from './dispatcher'
 import BlockCode from './blockcode'
 import Subscriber from './subscriber'
 
@@ -27,7 +27,7 @@ export default function (key = null) {
   let fail = async () => {}
   let initial = () => {}
   const states = new States()
-  const actions = new Actions()
+  const actions = new Dispatcher()
   const subcribes = new Map()
 
   // ====================================== //
