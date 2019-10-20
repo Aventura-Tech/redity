@@ -81,7 +81,7 @@ describe('Model: Concept', () => {
       }
     }
 
-    model.onListen = async (payload, header) => {
+    model.onListen = async (payload, states, header) => {
       expect(payload).toEqual(expect.anything())
       expect(header).toMatchObject({
         key: 'modelTest',
@@ -121,7 +121,7 @@ describe('Model: Concept', () => {
         example: 'This is other think'
       }
     }
-    model.onListen = async (payload, header) => {
+    model.onListen = async (payload, states, header) => {
       count++
 
       const { block } = header.blockcode
@@ -143,7 +143,7 @@ describe('Model: Concept', () => {
       expect(payload).toMatchObject(dataExample[count - 1])
       expect(header.event).toBe(actionsKey[count - 1])
     }
-    model.onFail = async (err, header) => {
+    model.onFail = async (err, states, header) => {
       countFail++
       expect(header.blockcode.num).toBe(2)
       if (header.blockcode.num === 2) {
@@ -170,7 +170,7 @@ describe('Model: Concept', () => {
     }
 
     await new Promise(resolve => {
-      model.onListen = async (payload, header) => {
+      model.onListen = async (payload, states, header) => {
         const { action1, action2 } = header.events
 
         if (header.event === 'action1') {

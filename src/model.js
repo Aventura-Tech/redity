@@ -187,7 +187,7 @@ export default function (key = null) {
 
       header.resolve = async (err) => {
         header.blockcode.catch(err)
-        const res = await fail(err, header, states.toMethod())
+        const res = await fail(err, states.toMethod(), header)
         return res
       }
       Object.freeze(header)
@@ -200,7 +200,7 @@ export default function (key = null) {
         // ====================================== //
         // Execute event for onListen             //
         // ====================================== //
-        listener(payload, header, states.toMethod()).then(async res => {
+        listener(payload, states.toMethod(), header).then(async res => {
         // ====================================== //
         // If success then finished blockcode and //
         // also current action                    //
@@ -219,7 +219,7 @@ export default function (key = null) {
           // Execute event for onFail and sending   //
           // information necesary                   //
           // ====================================== //
-          await fail(err, header, states.toMethod())
+          await fail(err, states.toMethod(), header)
           // ====================================== //
           // If success then finished blockcode and //
           // also current action                    //
