@@ -27,7 +27,7 @@ export default function (key = null) {
   let fail = async () => {}
   let initial = () => {}
   const states = new States()
-  const actions = new Dispatcher()
+  const dispatcher = new Dispatcher()
   const subcribes = new Map()
 
   // ====================================== //
@@ -49,10 +49,10 @@ export default function (key = null) {
   })
 
   // ====================================== //
-  // Return list methods of actions         //
+  // Return list methods of dispatcher         //
   // ====================================== //
-  Object.defineProperty(this, 'actions', {
-    get: () => actions.toMethod(),
+  Object.defineProperty(this, 'dispatchers', {
+    get: () => dispatcher.toMethod(),
     enumerable: true,
     configurable: false
   })
@@ -62,7 +62,7 @@ export default function (key = null) {
   // ====================================== //
   Object.defineProperty(this, 'init', {
     /**
-     * Initicial states, actions and configuration
+     * Initicial states, dispatcher and configuration
      * @param {function} cb Callback
      */
     set: cb => {
@@ -73,12 +73,12 @@ export default function (key = null) {
   })
 
   // ====================================== //
-  // Captura el evento de las actiones      //
+  // Captura el dispatcher                  //
   // ejecutadas                             //
   // ====================================== //
   Object.defineProperty(this, 'onListen', {
     /**
-     * For the events of actions
+     * For the events of dispatcher
      * @param {function} cb Callback
      */
     set: cb => {
@@ -94,7 +94,7 @@ export default function (key = null) {
   // ====================================== //
   Object.defineProperty(this, 'onFail', {
     /**
-     * For the fails of the actions
+     * For the fails of the dispatcher
      * @param {function} cb Callback
      */
     set: cb => {
@@ -116,9 +116,9 @@ export default function (key = null) {
       enumerable: true,
       configurable: false
     },
-    actions: {
+    dispatchers: {
       set: data => {
-        actions.init(data)
+        dispatcher.init(data)
       },
       enumerable: true,
       configurable: false
@@ -150,9 +150,9 @@ export default function (key = null) {
     }
 
     // ====================================== //
-    // Listen events by actions               //
+    // Listen events by dispatcher               //
     // ====================================== //
-    actions.onListen = (payload, headerAction, actionsEvent) => {
+    dispatcher.onListen = (payload, headerDispatcher, actions) => {
       const components = {}
       for (const [key, subscribed] of subcribes.entries()) {
         components[key] = {
@@ -163,24 +163,24 @@ export default function (key = null) {
         }
       }
       // ====================================== //
-      // Struturing header for onListen and     //
+      // Structuring header for onListen and    //
       // onFail                                 //
       // ====================================== //
       const header = {
         key: this.key,
-        actions: actions.toMethod(),
+        dispatchers: dispatcher.toMethod(),
         payload,
         wait: () => {},
         proceed: () => {},
-        event: headerAction.key,
-        events: actionsEvent,
+        action: headerDispatcher.key,
+        actions,
         models: {},
         history: {},
         eventFail: false,
         components: Object.freeze(components),
         // ====================================== //
         // Creating new blockcode for debug and   //
-        // for help in case errors of event       //
+        // for help in case errors of dispatch    //
         // ====================================== //
         blockcode: new BlockCode(dev)
       }
@@ -195,7 +195,7 @@ export default function (key = null) {
       // Stating blockcode for create blocks in //
       // the onListen of Model                  //
       // ====================================== //
-      header.blockcode.start(`Action: ${headerAction.key}`, payload)
+      header.blockcode.start(`Dispatch: ${headerDispatcher.key}`, payload)
       return new Promise(resolve => {
         // ====================================== //
         // Execute event for onListen             //

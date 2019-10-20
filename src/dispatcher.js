@@ -1,13 +1,13 @@
 import { IsNotFunction, IsNotObject } from './utils/exceptions'
 
 /**
- * Actions Class
+ * Dispatcher Class
  */
 export default function Dispatcher () {
   // ====================================== //
   // PRIVATE PROPERTY                       //
   // ====================================== //
-  // List of Actions
+  // List of Dispatcher
   const lists = new Map()
   let listener = async () => {}
   // ====================================== //

@@ -19,7 +19,7 @@ describe('Model: Constructor', () => {
 
     const props = {
       states: expect.any(Object),
-      actions: expect.any(Object),
+      dispatchers: expect.any(Object),
       init: undefined,
       onListen: undefined,
       onFail: undefined,
@@ -38,7 +38,7 @@ describe('Model: Concept', () => {
     const spy = jest.spyOn(States.prototype, 'init')
     model.init = (initial) => {
       expect(initial).toHaveProperty('states')
-      expect(initial).toHaveProperty('actions')
+      expect(initial).toHaveProperty('dispatchers')
       expect(initial).toHaveProperty('configurable')
 
       initial.states = {
@@ -46,7 +46,7 @@ describe('Model: Concept', () => {
         email: 'testing@gmail.com'
       }
 
-      initial.actions = {
+      initial.dispatchers = {
         changeName: 'Change Name of User',
         changeEmail: 'Change Email of User'
       }
@@ -58,7 +58,7 @@ describe('Model: Concept', () => {
       email: expect.any(Function)
     })
 
-    expect(model.actions).toMatchObject({
+    expect(model.dispatchers).toMatchObject({
       changeName: expect.any(Function),
       changeEmail: expect.any(Function)
     })
@@ -75,7 +75,7 @@ describe('Model: Concept', () => {
         loading: false,
         list: []
       }
-      initial.actions = {
+      initial.dispatchers = {
         getList: 'Getted data', // example
         submit: 'Sending data of form' // example
       }
@@ -85,13 +85,13 @@ describe('Model: Concept', () => {
       expect(payload).toEqual(expect.anything())
       expect(header).toMatchObject({
         key: 'modelTest',
-        actions: expect.any(Object),
+        dispatchers: expect.any(Object),
         payload: expect.anything(),
         resolve: expect.any(Function),
         wait: expect.any(Function),
         proceed: expect.any(Function),
-        event: expect.any(String),
-        events: expect.any(Object),
+        action: expect.any(String),
+        actions: expect.any(Object),
         blockcode: expect.any(Object),
         models: expect.any(Object),
         components: expect.any(Object),
@@ -101,7 +101,7 @@ describe('Model: Concept', () => {
       count++
     }
     model[symModelCreate](false) // creating model
-    const { getList, submit } = model.actions
+    const { getList, submit } = model.dispatchers
     expect(await getList('Any Data')).toBeTruthy()
     getList(15)
     expect(await getList([])).toBeFalsy()
@@ -112,11 +112,11 @@ describe('Model: Concept', () => {
 
   it('blockcode and onFail', async () => {
     const model = new Model('newModel')
-    const actionsKey = ['getData', 'example']
+    const dispatchersKey = ['getData', 'example']
     let count = 0
     let countFail = 0
     model.init = initial => {
-      initial.actions = {
+      initial.dispatchers = {
         getData: 'Getting data for states data',
         example: 'This is other think'
       }
@@ -125,23 +125,23 @@ describe('Model: Concept', () => {
       count++
 
       const { block } = header.blockcode
-      if (header.event === actionsKey[0]) {
+      if (header.action === dispatchersKey[0]) {
         block('==== This a description==== ')
-        expect(header.events.getData).toEqual(expect.any(Function))
-        expect(header.events.example).toBeFalsy()
+        expect(header.actions.getData).toEqual(expect.any(Function))
+        expect(header.actions.example).toBeFalsy()
         expect(header.blockcode.num).toBe(1)
         block('==== Epa ==== ')
         header.resolve('This is error')
       }
 
-      if (header.event === actionsKey[1]) {
+      if (header.event === dispatchersKey[1]) {
         block('==== Other description==== ')
-        expect(header.events.getData).toBeFalsy()
-        expect(header.events.example).toEqual(expect.any(Function))
+        expect(header.actions.getData).toBeFalsy()
+        expect(header.actions.example).toEqual(expect.any(Function))
       }
 
       expect(payload).toMatchObject(dataExample[count - 1])
-      expect(header.event).toBe(actionsKey[count - 1])
+      expect(header.action).toBe(dispatchersKey[count - 1])
     }
     model.onFail = async (err, states, header) => {
       countFail++
@@ -151,7 +151,7 @@ describe('Model: Concept', () => {
       }
     }
     model[symModelCreate](false) // creating model
-    const { getData, example } = model.actions
+    const { getData, example } = model.dispatchers
     await getData(dataExample[0])
     await example(dataExample[1])
     expect(count).toBe(2)
@@ -163,33 +163,33 @@ describe('Model: Concept', () => {
     let wasExecuteAction1 = false
     let wasExecuteAction2 = false
     model.init = initial => {
-      initial.actions = {
-        action1: 'This is first action',
-        action2: 'This is other action'
+      initial.dispatchers = {
+        dispatch1: 'This is first action',
+        dispatch2: 'This is other action'
       }
     }
 
     await new Promise(resolve => {
       model.onListen = async (payload, states, header) => {
-        const { action1, action2 } = header.events
+        const { dispatch1, dispatch2 } = header.actions
 
-        if (header.event === 'action1') {
-          expect(action1).toEqual(expect.any(Function))
-          expect(action2).toBeFalsy()
+        if (header.action === 'dispatch1') {
+          expect(dispatch1).toEqual(expect.any(Function))
+          expect(dispatch2).toBeFalsy()
           wasExecuteAction1 = true
         }
 
-        if (header.event === 'action2') {
-          expect(action1).toBeFalsy()
-          expect(action2).toEqual(expect.any(Function))
+        if (header.action === 'dispatch2') {
+          expect(dispatch1).toBeFalsy()
+          expect(dispatch2).toEqual(expect.any(Function))
           wasExecuteAction2 = true
         }
       }
       model[symModelCreate](false) // creating model
-      const { action1, action2 } = model.actions
-      action1('Any Data').then(res => {
+      const { dispatch1, dispatch2 } = model.dispatchers
+      dispatch1('Any Data').then(res => {
         expect(res).toBeTruthy()
-        action2({ data: 'other data' }).then(res2 => {
+        dispatch2({ data: 'other data' }).then(res2 => {
           expect(res2).toBeTruthy()
           resolve(true)
         })
