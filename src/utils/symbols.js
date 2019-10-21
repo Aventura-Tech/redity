@@ -45,3 +45,13 @@ export const symStateHistory = Symbol('State: history[Array]')
 // ====================================== //
 export const symStatesRegisters = Symbol('States: registers[Map]')
 export const symStatesListener = Symbol('States: listener[Function]')
+
+// ====================================== //
+// Symbol of Action                       //
+// ====================================== //
+export const symActionKey = Symbol('Action: key[String]')
+export const symActionDescription = Symbol('Action: description[String]')
+export const symActionLoading = Symbol('Action: loading[Boolean]')
+export const symActionListener = Symbol('Action Listener[function]')
+export const symActionResendEvent = Symbol('Action resendEvent[function]')
+export const symActionOnDone = Symbol('Action onDone[function]')

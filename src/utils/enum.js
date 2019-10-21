@@ -2,16 +2,24 @@
  * Constructor Enum
  * @param  {...any} params Values
  */
-export default function (...params) {
-  this.type = 'enum'
-  this.id = Date.now()
+function Enum (...params) {
+  const name = 'Enum'
 
-  const types = params.map((val, index) => ({
-    index,
-    num: index + 1,
-    val
-  }))
-  return function () {
-    return types
+  params.map(value => {
+    if (typeof value === 'object' || typeof value === 'function') throw new Error('Enum: only values')
+  })
+
+  return {
+    values: params,
+    name
   }
 }
+
+Object.defineProperty(Enum, 'name', {
+  value: 'Enum',
+  configurable: false,
+  writable: true,
+  enumerable: true
+})
+
+export default Enum

@@ -67,7 +67,7 @@ describe('Model: Concept', () => {
     done()
   })
 
-  it('onListen', async () => {
+  it('onListen', () => {
     const model = new Model('modelTest')
     let count = 0
     model.init = initial => {
@@ -81,7 +81,7 @@ describe('Model: Concept', () => {
       }
     }
 
-    model.onListen = async (payload, states, header) => {
+    model.onListen = (payload, states, header) => {
       expect(payload).toEqual(expect.anything())
       expect(header).toMatchObject({
         key: 'modelTest',
@@ -102,15 +102,16 @@ describe('Model: Concept', () => {
     }
     model[symModelCreate](false) // creating model
     const { getList, submit } = model.dispatchers
-    expect(await getList('Any Data')).toBeTruthy()
-    getList(15)
-    expect(await getList([])).toBeFalsy()
-    expect(await getList(false)).toBeFalsy()
-    expect(await submit({ username: 'Erick', password: '123456' })).toBeTruthy()
-    expect(count).toBe(3)
+    expect(getList('Any Data')).toBeTruthy()
+    getList(15, () => {
+      expect(getList([])).toBeTruthy()
+    })
+    expect(submit({ username: 'Erick', password: '123456' }, () => {
+      expect(count).toBe(3)
+    })).toBeTruthy()
   })
 
-  it('blockcode and onFail', async () => {
+  it('blockcode and onFail', () => {
     const model = new Model('newModel')
     const dispatchersKey = ['getData', 'example']
     let count = 0
@@ -152,16 +153,15 @@ describe('Model: Concept', () => {
     }
     model[symModelCreate](false) // creating model
     const { getData, example } = model.dispatchers
-    await getData(dataExample[0])
-    await example(dataExample[1])
+    getData(dataExample[0])
+    example(dataExample[1])
     expect(count).toBe(2)
     expect(countFail).toBe(1)
   })
 
-  it('Actions', async () => {
+  it('Dispatchers', async () => {
     const model = new Model('TestingModel')
-    let wasExecuteAction1 = false
-    let wasExecuteAction2 = false
+
     model.init = initial => {
       initial.dispatchers = {
         dispatch1: 'This is first action',
@@ -172,31 +172,26 @@ describe('Model: Concept', () => {
     await new Promise(resolve => {
       model.onListen = async (payload, states, header) => {
         const { dispatch1, dispatch2 } = header.actions
-
         if (header.action === 'dispatch1') {
           expect(dispatch1).toEqual(expect.any(Function))
           expect(dispatch2).toBeFalsy()
-          wasExecuteAction1 = true
         }
 
         if (header.action === 'dispatch2') {
           expect(dispatch1).toBeFalsy()
           expect(dispatch2).toEqual(expect.any(Function))
-          wasExecuteAction2 = true
         }
       }
+
       model[symModelCreate](false) // creating model
       const { dispatch1, dispatch2 } = model.dispatchers
-      dispatch1('Any Data').then(res => {
+      dispatch1('Any Data', res => {
         expect(res).toBeTruthy()
-        dispatch2({ data: 'other data' }).then(res2 => {
-          expect(res2).toBeTruthy()
-          resolve(true)
+        dispatch2({ name: 'MyName' }, (_res) => {
+          expect(_res).toBeTruthy()
+          setTimeout(resolve(), 1000)
         })
       })
     })
-
-    expect(wasExecuteAction1).toBeTruthy()
-    expect(wasExecuteAction2).toBeTruthy()
   })
 })

@@ -207,6 +207,7 @@ export default function (key = null) {
         // ====================================== //
           header.blockcode.end()
           resolve(true)
+          headerDispatcher.done()
         // ====================================== //
         // If case the event if fail              //
         // ====================================== //
@@ -226,6 +227,7 @@ export default function (key = null) {
           // ====================================== //
           header.blockcode.end()
           resolve(true)
+          headerDispatcher.done()
         })
       })
     }

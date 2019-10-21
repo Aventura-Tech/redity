@@ -1,4 +1,6 @@
 import { IsNotFunction, IsNotObject } from './utils/exceptions'
+import Action from './action'
+import { symActionLoading } from './utils/symbols'
 
 /**
  * Dispatcher Class
@@ -41,59 +43,67 @@ export default function Dispatcher () {
    * create actions
    * @param {object} actions A list object for create actions
    */
-  this.init = actions => {
+  this.init = (actions, options) => {
     if (typeof actions !== 'object' || Array.isArray(actions)) throw IsNotObject('Dispatcher parameter')
 
+    const stateActions = {}
     for (const key in actions) {
-      const stateActions = {}
+      const action = new Action(key, actions[key])
+      // const stateActions = {}
+      stateActions[key] = action[symActionLoading]
 
-      for (const _key in actions) {
-        stateActions[_key] = false
-      }
-      /**
-       * Generate a event for this action
-       * @param {any} payload Data for change to event
-       */
-      const event = async payload => {
-        // ====================================== //
-        // If action is active, dont generate the //
-        // event. Only if is inactive             //
-        // ====================================== //
-        if (stateActions[key]) return false
-        // ====================================== //
-        // Active event of current action         //
-        // ====================================== //
+      // /**
+      //  * Generate a event for this dispatch
+      //  * @param {any} payload Data for change to event
+      //  */
+      // const event = async payload => {
+      //   // ====================================== //
+      //   // If action is active, dont generate the //
+      //   // event. Only if is inactive             //
+      //   // ====================================== //
+      //   if (stateActions[key]) return false
+      //   // ====================================== //
+      //   // Active event of current action         //
+      //   // ====================================== //
+      //   stateActions[key] = () => {}
+      //   // ====================================== //
+      //   // Header: Information of this actions    //
+      //   // and method                             //
+      //   // ====================================== //
+      //   const header = Object.freeze({
+      //     // key action
+      //     key,
+      //     // information the action defined in init
+      //     description: actions[key],
+      //     /**
+      //      * Informate the event is finished
+      //      */
+      //     done: () => {
+      //       stateActions[key] = false
+      //     }
+      //   })
+      //   // ====================================== //
+      //   // Generate Event onListen and waiting    //
+      //   // ====================================== //
+      //   await listener(payload, header, { ...stateActions })
+      //   // ====================================== //
+      //   // befere finished event                  //
+      //   // ====================================== //
+      //   stateActions[key] = false
+      //   // ====================================== //
+      //   // Informando que el evento se dió        //
+      //   // ====================================== //
+      //   return true
+      // }
+
+      lists.set(key, action)
+    }
+
+    for (const [key, action] of lists.entries()) {
+      action.onListen = (payload, header) => {
         stateActions[key] = () => {}
-        // ====================================== //
-        // Header: Information of this actions    //
-        // and method                             //
-        // ====================================== //
-        const header = Object.freeze({
-          // key action
-          key,
-          // information the action defined in init
-          description: actions[key],
-          /**
-           * Informate the event is finished
-           */
-          done: () => {
-            stateActions[key] = false
-          }
-        })
-        // ====================================== //
-        // Generate Event onListen and waiting    //
-        // ====================================== //
-        await listener(payload, header, { ...stateActions })
-        // ====================================== //
-        // befere finished event                  //
-        // ====================================== //
-        stateActions[key] = false
-        // ====================================== //
-        // Informando que el evento se dió        //
-        // ====================================== //
-        return true
+        listener(payload, header, stateActions)
       }
-      lists.set(key, event)
     }
   }
   /**
@@ -102,8 +112,8 @@ export default function Dispatcher () {
    */
   this.toMethod = () => {
     const actionsToMethod = {}
-    for (const [key, value] of lists.entries()) {
-      actionsToMethod[key] = value
+    for (const [key, action] of lists.entries()) {
+      actionsToMethod[key] = action.dispatch
     }
     return actionsToMethod
   }
