@@ -10,10 +10,10 @@ import Subscriber from '../subscriber'
  * Connect a component with the model
  * @param {string} modelKey Key of Model
  * @param {function} mapStateToProps options
- * @param {function} mapActionToProps actions
+ * @param {function} mapDispatchToProps actions
  * @returns {funtion}
  */
-export default function (modelKey, mapStateToProps = false, mapActionToProps = () => {}) {
+export default function (modelKey, mapStateToProps = false, mapDispatchToProps = () => {}) {
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //
@@ -43,11 +43,11 @@ export default function (modelKey, mapStateToProps = false, mapActionToProps = (
     if (!Component) throw IsNotComponent('connect')
 
     // ====================================== //
-    // Seting all actions defined in init to  //
-    // mapStateToProps and getting the        //
-    // actions defined                        //
+    // Seting all dispatcher defined in init  //
+    // to mapStateToProps and getting the     //
+    // dispatcher defined                     //
     // ====================================== //
-    const actionsDefined = mapActionToProps(Model.actions)
+    const dispatchersDefined = mapDispatchToProps(Model.actions)
 
     // ====================================== //
     // For subcriber                          //
@@ -132,7 +132,7 @@ export default function (modelKey, mapStateToProps = false, mapActionToProps = (
       // ====================================== //
       // Render                                 //
       // ====================================== //
-      return (<Component {...actionsDefined} {...props} {...statesDefinedToProps} />)
+      return (<Component {...dispatchersDefined} {...statesDefinedToProps} {...props} />)
     }
   }
 }

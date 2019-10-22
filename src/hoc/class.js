@@ -10,10 +10,10 @@ import Template from './template'
  * Connect a component with the model
  * @param {string} modelKey Key of Model
  * @param {function} mapStateToProps options
- * @param {function} mapActionToProps options
+ * @param {function} mapDispatchToProps options
  * @returns {funtion}
  */
-export default function connect (modelKey, mapStateToProps = false, mapActionToProps = () => {}) {
+export default function connect (modelKey, mapStateToProps = false, mapDispatchToProps = () => {}) {
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //
@@ -43,11 +43,11 @@ export default function connect (modelKey, mapStateToProps = false, mapActionToP
     if (!Component) throw IsNotComponent('connect')
 
     // ====================================== //
-    // Seting all actions defined in init to  //
-    // mapStateToProps and getting the        //
-    // actions defined                        //
+    // Seting all dispatcher defined in init  //
+    // to mapStateToProps and getting the     //
+    // dispatchers defined                    //
     // ====================================== //
-    const actionsDefined = mapActionToProps(Model.actions)
+    const dispatchersDefined = mapDispatchToProps(Model.actions)
 
     // ====================================== //
     // declared Subcriber, and his key        //
@@ -110,7 +110,7 @@ export default function connect (modelKey, mapStateToProps = false, mapActionToP
         // ====================================== //
         // Render                                 //
         // ====================================== //
-        return (<Component {...actionsDefined} {...statesDefinedToProps} {...this.props} />)
+        return (<Component {...statesDefinedToProps} {...dispatchersDefined} {...this.props} />)
       }
     }
   }

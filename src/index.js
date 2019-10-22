@@ -2,7 +2,7 @@ import States from './states'
 import Log from './utils/log'
 import Blockcode from './blockcode'
 import Model from './model'
-import connect from './hoc'
+import connect, { connectFaker } from './hoc'
 import Subscriber from './subscriber'
 import { symRedityModels, symRedityGetModel, symModelCreate } from './utils/symbols'
 import { IsNotFunction } from './utils/exceptions'
@@ -48,5 +48,6 @@ export {
   Log,
   Blockcode,
   connect,
-  Subscriber
+  Subscriber,
+  connectFaker
 }
