@@ -1,10 +1,11 @@
 import React from 'react'
 
+import Redity from '../index'
 import { RequireKeyModel, IsNotComponent, ModelNotFound } from '../utils/exceptions'
 import { symRedityGetModel } from '../utils/symbols'
-import Redity from '../index'
 import Subscriber from '../subscriber'
 import Template from './template'
+import connectFaker from './connectFaker'
 
 /**
  * Connect a component with the model
@@ -17,7 +18,13 @@ export default function connect (modelKey, mapStateToProps = false, mapDispatchT
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //
-  if (typeof modelKey !== 'string') throw RequireKeyModel('connect')
+  if (typeof modelKey !== 'string') {
+    if (modelKey !== false) {
+      throw RequireKeyModel('connect')
+    }
+  }
+
+  if (modelKey === false) return connectFaker(modelKey, mapStateToProps, mapDispatchToProps)
 
   // ====================================== //
   // Getting model by key                   //
@@ -47,7 +54,7 @@ export default function connect (modelKey, mapStateToProps = false, mapDispatchT
     // to mapStateToProps and getting the     //
     // dispatchers defined                    //
     // ====================================== //
-    const dispatchersDefined = mapDispatchToProps(Model.actions)
+    const dispatchersDefined = mapDispatchToProps(Model.dispatchers)
 
     // ====================================== //
     // declared Subcriber, and his key        //

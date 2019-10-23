@@ -7,7 +7,11 @@ export default function (modelKey, mapStateToProps = false, mapDispatchToProps =
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //
-  if (typeof modelKey !== 'string') throw RequireKeyModel('connect')
+  if (typeof modelKey !== 'string') {
+    if (modelKey !== false) {
+      throw RequireKeyModel('connect')
+    }
+  }
 
   return (Component) => {
     if (typeof mapStateToProps === 'function') {
