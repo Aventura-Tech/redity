@@ -1,5 +1,5 @@
 import Redity from '../src'
-import { symRedityModels, symRedityGetModel } from '../src/utils/symbols'
+import { symRedityModels } from '../src/utils/symbols'
 
 describe('Redity: Constructor', () => {
   it('Props and Methods', () => {
@@ -9,7 +9,7 @@ describe('Redity: Constructor', () => {
     expect(Redity.config).toEqual(expect.any(Object))
     expect(Redity[symRedityModels]).toEqual(expect.any(Map))
     expect(Redity.register).toEqual(expect.any(Function))
-    expect(Redity[symRedityGetModel]).toEqual(expect.any(Function))
+    expect(Redity.get).toEqual(expect.any(Function))
   })
 
   it('Config', () => {

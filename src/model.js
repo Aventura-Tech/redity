@@ -109,6 +109,7 @@ export default function (key = null) {
   // ====================================== //
   const initialProperties = {}
   const settings = {}
+  this.capsule = []
 
   Object.defineProperties(initialProperties, {
     states: {
@@ -142,10 +143,12 @@ export default function (key = null) {
         for (const key in data) {
           const action = dispatcher.get(key)
           if (action) {
-            // eslint-disable-next-line no-prototype-builtins
-            if (data[key].hasOwnProperty('executeBefore')) {
-              action.dispatch()
-            }
+            this.capsule.push(() => {
+              // eslint-disable-next-line no-prototype-builtins
+              if (data[key].hasOwnProperty('executeBefore')) {
+                action.dispatch()
+              }
+            })
           }
         }
       },
@@ -175,7 +178,7 @@ export default function (key = null) {
   // ====================================== //
   this[symModelCreate] = (development = true) => {
     const dev = development ? config.dev : false
-
+    initial(initialProperties, settings)
     // ====================================== //
     // Listen changes values of States        //
     // ====================================== //
@@ -267,8 +270,6 @@ export default function (key = null) {
         })
       })
     }
-
-    initial(initialProperties, settings)
   }
 
   // ====================================== //

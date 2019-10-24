@@ -4,7 +4,7 @@ import Blockcode from './blockcode'
 import Model from './model'
 import connect, { connectFaker } from './hoc'
 import Subscriber from './subscriber'
-import { symRedityModels, symRedityGetModel, symModelCreate } from './utils/symbols'
+import { symRedityModels, symModelCreate } from './utils/symbols'
 import { IsNotFunction } from './utils/exceptions'
 /**
  * Redity class
@@ -31,10 +31,13 @@ Redity.register = (key, modelContructor) => {
   modelContructor(model)
   model[symModelCreate](Redity.config.dev)
   Redity[symRedityModels].set(key, model)
-  return Redity.register
+  return {
+    register: Redity.register,
+    get: () => model
+  }
 }
 
-Redity[symRedityGetModel] = key => {
+Redity.get = key => {
   const has = Redity[symRedityModels].has(key)
   if (!has) return has
   return Redity[symRedityModels].get(key)

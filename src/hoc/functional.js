@@ -2,7 +2,6 @@ import React from 'react'
 
 import Redity from '../index'
 import { RequireKeyModel, IsNotComponent, ModelNotFound } from '../utils/exceptions'
-import { symRedityGetModel } from '../utils/symbols'
 import Subscriber from '../subscriber'
 import Template from './template'
 import connectFaker from './connectFaker'
@@ -29,7 +28,7 @@ export default function (modelKey, mapStateToProps = false, mapDispatchToProps =
   // ====================================== //
   // Getting model by key                   //
   // ====================================== //
-  const Model = Redity[symRedityGetModel](modelKey)
+  const Model = Redity.get(modelKey)
   // ====================================== //
   // If not found model fatal error         //
   // ====================================== //
