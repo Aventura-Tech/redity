@@ -36,10 +36,13 @@ describe('Model: Concept', () => {
   const model = new Model()
   it('init', done => {
     const spy = jest.spyOn(States.prototype, 'init')
-    model.init = (initial) => {
+    model.init = (initial, settings) => {
       expect(initial).toHaveProperty('states')
       expect(initial).toHaveProperty('dispatchers')
-      expect(initial).toHaveProperty('configurable')
+      expect(settings).toHaveProperty('states')
+      expect(settings).toHaveProperty('dispatchers')
+      expect(settings).toHaveProperty('access')
+      expect(settings).toHaveProperty('dev')
 
       initial.states = {
         name: 'Erick',

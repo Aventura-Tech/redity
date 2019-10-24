@@ -19,7 +19,7 @@ export default function (key = null) {
   // PRIVATE PROPERTY                       //
   // ====================================== //
 
-  let config = {
+  const config = {
     access: PRIVATE,
     dev: true
   }
@@ -108,6 +108,8 @@ export default function (key = null) {
   // CONSTRUCTOR                            //
   // ====================================== //
   const initialProperties = {}
+  const settings = {}
+
   Object.defineProperties(initialProperties, {
     states: {
       set: data => {
@@ -122,11 +124,46 @@ export default function (key = null) {
       },
       enumerable: true,
       configurable: false
-    },
-    configurable: {
+    }
+  })
+
+  Object.defineProperties(settings, {
+    states: {
       set: data => {
-        if (typeof data !== 'object' || Array.isArray(data)) throw IsNotObject('Init - Configurable')
-        config = { ...config, ...data }
+        if (typeof data !== 'object' || Array.isArray(data)) throw IsNotObject()
+      },
+      enumerable: true,
+      configurable: false
+    },
+
+    dispatchers: {
+      set: data => {
+        if (typeof data !== 'object' || Array.isArray(data)) throw IsNotObject()
+        for (const key in data) {
+          const action = dispatcher.get(key)
+          if (action) {
+            // eslint-disable-next-line no-prototype-builtins
+            if (data[key].hasOwnProperty('executeBefore')) {
+              action.dispatch()
+            }
+          }
+        }
+      },
+      enumerable: true,
+      configurable: false
+    },
+
+    access: {
+      set: value => {
+        config.access = value
+      },
+      enumerable: true,
+      configurable: false
+    },
+
+    dev: {
+      set: value => {
+        config.dev = value
       },
       enumerable: true,
       configurable: false
@@ -138,7 +175,6 @@ export default function (key = null) {
   // ====================================== //
   this[symModelCreate] = (development = true) => {
     const dev = development ? config.dev : false
-    initial(initialProperties)
 
     // ====================================== //
     // Listen changes values of States        //
@@ -231,6 +267,8 @@ export default function (key = null) {
         })
       })
     }
+
+    initial(initialProperties, settings)
   }
 
   // ====================================== //

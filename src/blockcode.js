@@ -77,7 +77,7 @@ export default function (dev = true) {
    * @param {any} catchData Data additional of Catch
    */
   this[symBCSetBlock] = (status, catchData = null) => {
-    blockCurrent.time = Date.now() - timeStart
+    blockCurrent.time = (Date.now() - timeStart) + 'ms'
     blockCurrent.status = status
     blockCurrent.catchData = catchData
     blocks.set(blockCurrent.id, { ...blockCurrent })
@@ -191,7 +191,7 @@ export default function (dev = true) {
     if (!blockCurrent) throw Exception.BlockNotFound()
     if (blockCurrent.status !== this.Status.FAIL) return false
 
-    blockCurrent.time = Date.now() - timeStart
+    blockCurrent.time = (Date.now() - timeStart) + 'ms'
     blockCurrent.status = this.Status.RESOLVED
     blocks.set(blockCurrent.id, { ...blockCurrent })
     if (this._dev && !hide) {

@@ -55,7 +55,7 @@ const Log = {
     if (!Log[symLogVerify](body)) throw new Error('Require a Object')
     Log[symLogType] = 'info'
     Log[symLogBody] = { ...Log[symLogBody], ...body }
-    Log[symLogManufacture]('padding: 2px 5px; border-left: 2px solid black')
+    Log[symLogManufacture]('padding: 2px 5px; border: 2px solid black')
   },
 
   /**

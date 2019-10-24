@@ -52,50 +52,6 @@ export default function Dispatcher () {
       // const stateActions = {}
       stateActions[key] = action[symActionLoading]
 
-      // /**
-      //  * Generate a event for this dispatch
-      //  * @param {any} payload Data for change to event
-      //  */
-      // const event = async payload => {
-      //   // ====================================== //
-      //   // If action is active, dont generate the //
-      //   // event. Only if is inactive             //
-      //   // ====================================== //
-      //   if (stateActions[key]) return false
-      //   // ====================================== //
-      //   // Active event of current action         //
-      //   // ====================================== //
-      //   stateActions[key] = () => {}
-      //   // ====================================== //
-      //   // Header: Information of this actions    //
-      //   // and method                             //
-      //   // ====================================== //
-      //   const header = Object.freeze({
-      //     // key action
-      //     key,
-      //     // information the action defined in init
-      //     description: actions[key],
-      //     /**
-      //      * Informate the event is finished
-      //      */
-      //     done: () => {
-      //       stateActions[key] = false
-      //     }
-      //   })
-      //   // ====================================== //
-      //   // Generate Event onListen and waiting    //
-      //   // ====================================== //
-      //   await listener(payload, header, { ...stateActions })
-      //   // ====================================== //
-      //   // befere finished event                  //
-      //   // ====================================== //
-      //   stateActions[key] = false
-      //   // ====================================== //
-      //   // Informando que el evento se dió        //
-      //   // ====================================== //
-      //   return true
-      // }
-
       lists.set(key, action)
     }
 
@@ -106,8 +62,18 @@ export default function Dispatcher () {
       }
     }
   }
+
   /**
-   * Return all the lists actions functional
+   * Return a action
+   * @param {string} key action key
+   */
+  this.get = key => {
+    const action = lists.get(key)
+    return action || false
+  }
+
+  /**
+   * Return all the actions functional lists
    * @returns {object} Object of methods
    */
   this.toMethod = () => {
