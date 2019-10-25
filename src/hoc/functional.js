@@ -123,7 +123,7 @@ export default function (modelKey, mapStateToProps = false, mapDispatchToProps =
         // Listen changes of states               //
         // ====================================== //
         subscriber.onListen = states => {
-          statesDefinedToProps = states
+          statesDefinedToProps = { ...states }
           // ====================================== //
           // Force Render                           //
           // ====================================== //

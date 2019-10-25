@@ -184,7 +184,7 @@ export default function (key = null) {
     // ====================================== //
     states.onListen = (key, payload) => {
       for (const subscribed of subcribes.entries()) {
-        subscribed[1][symSubscriberGenerate](key, payload)
+        subscribed[1][symSubscriberGenerate](key, payload, states.values())
       }
     }
 
@@ -245,8 +245,8 @@ export default function (key = null) {
         // also current action                    //
         // ====================================== //
           header.blockcode.end()
-          resolve(true)
           headerDispatcher.done()
+          resolve(true)
         // ====================================== //
         // If case the event if fail              //
         // ====================================== //
@@ -265,8 +265,8 @@ export default function (key = null) {
           // also current action                    //
           // ====================================== //
           header.blockcode.end()
-          resolve(true)
           headerDispatcher.done()
+          resolve(true)
         })
       })
     }
@@ -282,7 +282,7 @@ export default function (key = null) {
    */
   this.subscribe = subscriber => {
     if (!(subscriber instanceof Subscriber)) throw new Error('Require a instance of Subscriber')
-    subscriber[symSubscriberInit](states.get())
+    subscriber[symSubscriberInit](states.values())
     subcribes.set(subscriber.key, subscriber)
     return subscriber.key
   }

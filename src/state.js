@@ -70,7 +70,7 @@ export default function (info, history = false) {
    * @param {any} payload New data for this state
    */
   this.change = (payload = undefined) => {
-    if (payload === undefined) return this._value
+    if (payload === undefined) return this[symStateVal]
     if (JSON.stringify(this[symStateVal]) === JSON.stringify(payload)) return this[symStateVal]
 
     // ====================================== //

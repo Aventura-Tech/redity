@@ -16,6 +16,9 @@ export default function (dev = true) {
     writable: true
   })
 
+  const logStart = false
+  const logEnd = false
+
   let started = false
   let finished = false
   let blockCurrent = null
@@ -115,15 +118,17 @@ export default function (dev = true) {
     if (started) throw Exception.IsStarted()
     started = true
     if (this._dev && !hide) {
-      Log.norm({
-        label: 'Blockcode - Start',
-        message: 'Running...',
-        data: {
-          id: this.id,
-          name,
-          referenceData
-        }
-      })
+      if (logStart) {
+        Log.norm({
+          label: 'Blockcode - Start',
+          message: 'Running...',
+          data: {
+            id: this.id,
+            name,
+            referenceData
+          }
+        })
+      }
     }
   }
 
@@ -223,11 +228,13 @@ export default function (dev = true) {
     }
 
     if (this._dev && !hide) {
-      Log.norm({
-        label: 'BlockCode - Finished',
-        message: `${blocks.size} blocks`,
-        data: listBlocks
-      })
+      if (logEnd) {
+        Log.norm({
+          label: 'BlockCode - Finished',
+          message: `${blocks.size} blocks`,
+          data: listBlocks
+        })
+      }
     }
     return listBlocks
   }

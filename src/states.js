@@ -68,6 +68,17 @@ Object.defineProperty(States.prototype, 'onListen', {
 // ===================================== //
 // PUBLIC METHODS                        //
 // ===================================== //
+/** Get Values States
+* @returns {Object} All States Registered, only values
+*/
+States.prototype.values = function () {
+  const statesValues = {}
+  for (const [key, state] of this[symStatesRegisters].entries()) {
+    statesValues[key] = state.val
+  }
+  return statesValues
+}
+
 /** Get States
 * @returns {Object} All States Registered
 */
@@ -85,8 +96,8 @@ States.prototype.get = function () {
 */
 States.prototype.toMethod = function () {
   const methods = {}
-  for (const [key, value] of this[symStatesRegisters].entries()) {
-    methods[key] = value.change
+  for (const [key, state] of this[symStatesRegisters].entries()) {
+    methods[key] = state.change
   }
   return methods
 }

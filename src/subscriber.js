@@ -25,7 +25,6 @@ export default function Subscriber (key = false, mapStateToProps = false) {
   this.key = key || parseInt(Date.now() / 9000000) + index
   this[symSubscriberListener] = () => {}
   this.statesDefined = {}
-  this.allStates = {}
   this.props = {}
   index++
 }
@@ -37,10 +36,7 @@ export default function Subscriber (key = false, mapStateToProps = false) {
  * @param {object} allStates object of states
  */
 Subscriber.prototype[symSubscriberInit] = function (allStates) {
-  for (const key in allStates) {
-    this.allStates[key] = allStates[key].val
-  }
-  const statesDefined = this[symSubscriberMapStateToProps](this.allStates)
+  const statesDefined = this[symSubscriberMapStateToProps](allStates)
   if (typeof statesDefined !== 'object' || Array.isArray(statesDefined)) throw IsNotObject('mapStateToProps')
   this.statesDefined = statesDefined
 }
@@ -60,8 +56,8 @@ Subscriber.prototype.setProps = function (props) {
 // ====================================== //
 // Generate a event                       //
 // ====================================== //
-Subscriber.prototype[symSubscriberGenerate] = function (keyState, nextPayloadState) {
-  const statesDefined = this[symSubscriberMapStateToProps]({ ...this.allStates, [keyState]: nextPayloadState })
+Subscriber.prototype[symSubscriberGenerate] = function (keyState, nextPayloadState, allStates) {
+  const statesDefined = this[symSubscriberMapStateToProps]({ ...allStates, [keyState]: nextPayloadState })
   if (JSON.stringify(statesDefined) === JSON.stringify(this.statesDefined)) return false
   this.statesDefined = statesDefined
 

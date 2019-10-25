@@ -22,9 +22,5 @@ describe('Subscriber', () => {
   it('expect: contructor', () => {
     const subcriber = new Subscriber(false, mapStateToProps)
     expect(subcriber[symSubscriberInit](states.get()))
-    expect(subcriber.allStates).toMatchObject({
-      name: 'Erick',
-      email: 'test@gmail.com'
-    })
   })
 })
