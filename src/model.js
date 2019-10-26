@@ -107,78 +107,38 @@ export default function (key = null) {
   // ====================================== //
   // CONSTRUCTOR                            //
   // ====================================== //
-  const initialProperties = {}
-  const settings = {}
   this.capsule = []
 
-  Object.defineProperties(initialProperties, {
-    states: {
-      set: data => {
-        states.init(data)
-      },
-      enumerable: true,
-      configurable: false
-    },
-    dispatchers: {
-      set: data => {
-        dispatcher.init(data)
-      },
-      enumerable: true,
-      configurable: false
-    }
-  })
+  const init = {
+    states: {},
+    dispatchers: {}
+  }
 
-  Object.defineProperties(settings, {
-    states: {
-      set: data => {
-        if (typeof data !== 'object' || Array.isArray(data)) throw IsNotObject()
-      },
-      enumerable: true,
-      configurable: false
-    },
+  const settings = {
+    states: {},
+    dispatchers: {},
+    dev: true,
+    access: PRIVATE
+  }
 
-    dispatchers: {
-      set: data => {
-        if (typeof data !== 'object' || Array.isArray(data)) throw IsNotObject()
-        for (const key in data) {
-          const action = dispatcher.get(key)
-          if (action) {
-            this.capsule.push(() => {
-              // eslint-disable-next-line no-prototype-builtins
-              if (data[key].hasOwnProperty('executeBefore')) {
-                action.dispatch()
-              }
-            })
-          }
-        }
-      },
-      enumerable: true,
-      configurable: false
-    },
-
-    access: {
-      set: value => {
-        config.access = value
-      },
-      enumerable: true,
-      configurable: false
-    },
-
-    dev: {
-      set: value => {
-        config.dev = value
-      },
-      enumerable: true,
-      configurable: false
-    }
-  })
+  const prepare = () => {
+    if (typeof init.states !== 'object' || Array.isArray(init.states)) throw IsNotObject('initial')
+    if (typeof settings.states !== 'object' || Array.isArray(settings.states)) throw IsNotObject('initial')
+    if (typeof init.dispatchers !== 'object' || Array.isArray(init.dispatchers)) throw IsNotObject('initial')
+    if (typeof settings.dispatchers !== 'object' || Array.isArray(settings.dispatchers)) throw IsNotObject('initial')
+    states.init(init.states, settings.states)
+    dispatcher.init(init.dispatchers, settings.dispatchers)
+    config.dev = settings.dev
+    config.access = settings.access
+  }
 
   // ====================================== //
   // METHODS PRIVATE                        //
   // ====================================== //
   this[symModelCreate] = (development = true) => {
+    initial(init, settings)
+    prepare()
     const dev = development ? config.dev : false
-    initial(initialProperties, settings)
     // ====================================== //
     // Listen changes values of States        //
     // ====================================== //

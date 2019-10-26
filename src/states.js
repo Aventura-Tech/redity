@@ -16,14 +16,16 @@ function States () {
 // ====================================== //
 // - Initial States                       //
 // ====================================== //
-States.prototype.init = function (states) {
+States.prototype.init = function (states, options = {}) {
   if (typeof states !== 'object' || Array.isArray(states)) throw new Error('States require a object')
 
   for (const key in states) {
     const state = new State({
+      type: null,
+      history: false,
+      ...options[key],
       key,
-      val: states[key],
-      type: null
+      val: states[key]
     })
     // ====================================== //
     // Listen any change og current state     //

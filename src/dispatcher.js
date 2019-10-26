@@ -43,12 +43,17 @@ export default function Dispatcher () {
    * create actions
    * @param {object} actions A list object for create actions
    */
-  this.init = (actions, options) => {
+  this.init = (actions, options = {}) => {
     if (typeof actions !== 'object' || Array.isArray(actions)) throw IsNotObject('Dispatcher parameter')
 
     const stateActions = {}
     for (const key in actions) {
-      const action = new Action(key, actions[key])
+      let action
+      if (options[key] === undefined) {
+        action = new Action(key, actions[key])
+      } else {
+        action = new Action(key, actions[key], options[key])
+      }
       // const stateActions = {}
       stateActions[key] = action[symActionLoading]
 
