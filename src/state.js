@@ -1,6 +1,9 @@
-import { symStateVal, symStateType, symStateOnChange, symStateCountChanges, symStateHistories, symStateHistory } from './utils/symbols'
+import { symStateVal, symStateType, symStateOnChange, symStateCountChanges, symStateHistories, symStateHistory, symStateDeep } from './utils/symbols'
+import iftypeof from './utils/iftypeof'
 
-export default function (info) {
+export default function State (info) {
+  this.key = info.key
+  this.warn = info.warn ? true : info.warn
   // ====================================== //
   // Value of this State                    //
   // ====================================== //
@@ -8,11 +11,15 @@ export default function (info) {
   // ====================================== //
   // Saving history of this           state //
   // ====================================== //
-  this[symStateHistory] = info.history
+  this[symStateHistory] = info.history ? info.history : false
+  // ====================================== //
+  // Quantity max history                   //
+  // ====================================== //
+  this[symStateDeep] = info.deep ? info.deep : 2
   // ====================================== //
   // Type Value                             //
   // ====================================== //
-  this[symStateType] = info.type
+  this[symStateType] = info.type ? info.type : 'any'
   // ====================================== //
   // Execute when exist a change in value   //
   // ====================================== //
@@ -26,6 +33,8 @@ export default function (info) {
   // Guarda un historial del estado         //
   // ====================================== //
   this[symStateHistories] = []
+
+  iftypeof(this[symStateVal], this[symStateType])
 
   Object.defineProperty(this, 'val', {
     get: () => this[symStateVal],
@@ -46,7 +55,7 @@ export default function (info) {
   // Return history of state                //
   // ====================================== //
   Object.defineProperty(this, 'history', {
-    get: () => this[symStateHistory] ? this[symStateHistories] : false,
+    get: () => this[symStateHistories],
     enumerable: true,
     configurable: false
   })
@@ -74,6 +83,13 @@ export default function (info) {
    * @param {any} payload New data for this state
    */
   this.change = (payload = undefined) => {
+    if (!iftypeof(
+      payload,
+      this[symStateType],
+      this.warn,
+      `State - ${this.key}: `)
+    ) return this[symStateVal]
+
     if (payload === undefined) return this[symStateVal]
     if (JSON.stringify(this[symStateVal]) === JSON.stringify(payload)) return this[symStateVal]
 
@@ -82,6 +98,9 @@ export default function (info) {
     // ====================================== //
     if (this[symStateHistory]) {
       this[symStateHistories].push(this[symStateVal])
+      if (this[symStateHistories].length > this[symStateDeep]) {
+        this[symStateHistories].splice(0, 1)
+      }
     }
     // ====================================== //
     // Generate Event onChange                //
@@ -97,7 +116,63 @@ export default function (info) {
   }
 
   this.change.value = () => {
+    const payload = this[symStateVal]
+    if (typeof payload === 'object' && !Array.isArray(payload)) {
+      return { ...payload }
+    }
+    if (Array.isArray(payload)) {
+      return [...payload]
+    }
     return this[symStateVal]
+  }
+
+  this.change.past = () => {
+    const length = this[symStateHistories].length
+    if (length > 0) {
+      const lastPayload = this[symStateHistories][length - 1]
+      // ====================================== //
+      // Generate Event onChange                //
+      // ====================================== //
+      this[symStateOnChange](lastPayload)
+      // ====================================== //
+      // Set new value, count and return        //
+      // current value                          //
+      // ====================================== //
+      this[symStateVal] = lastPayload
+      this[symStateCountChanges] += 1
+      this[symStateHistories].pop()
+      return true
+    }
+    return false
+  }
+
+  /**
+   * Change value unseen
+   */
+  this.change.unseen = payload => {
+    if (!iftypeof(
+      payload,
+      this[symStateType],
+      this.warn,
+      `State - ${this.key}: `)
+    ) return this[symStateVal]
+
+    if (payload === undefined) return this[symStateVal]
+    if (JSON.stringify(this[symStateVal]) === JSON.stringify(payload)) return false
+
+    // ====================================== //
+    // Saving values in the history           //
+    // ====================================== //
+    if (this[symStateHistory]) {
+      this[symStateHistories].push(this[symStateVal])
+    }
+    // ====================================== //
+    // Set new value, count and return        //
+    // current value                          //
+    // ====================================== //
+    this[symStateVal] = payload
+    this[symStateCountChanges] += 1
+    return true
   }
 
   // ====================================== //

@@ -40,6 +40,7 @@ export const symStateOnChange = Symbol('State: onChange[Function]')
 export const symStateCountChanges = Symbol('State: countChanges[Number]')
 export const symStateHistory = Symbol('State: history[Bool]')
 export const symStateHistories = Symbol('State histories[Array]')
+export const symStateDeep = Symbol('State deep[Number]')
 
 // ====================================== //
 // Symbol of States                       //

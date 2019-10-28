@@ -5,10 +5,10 @@ import Enum from './enum'
  * @param {any} data Data for varify
  * @param {any} typePayload Constructor or 'any'
  */
-export default function iftypeof (data, typePayload = 'any', warn = true) {
+export default function iftypeof (data, typePayload = 'any', warn = true, label = '') {
   const ExceptionNotTypeOf = name => {
     //   eslint-disable-next-line no-console
-    if (warn) console.warn(`Payload is not type of ${name}`)
+    if (warn) console.warn(`${label} Payload is not type of ${name}`)
   }
 
   if (typePayload !== 'any') {

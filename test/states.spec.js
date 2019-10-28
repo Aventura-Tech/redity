@@ -36,7 +36,7 @@ describe('Creating States', () => {
       val: expect.anything(),
       changes: 0,
       change: expect.any(Function),
-      type: null
+      type: 'any'
     }
     expect(statesRegistered.aState).toMatchObject(object)
     expect(statesRegistered.otherState).toMatchObject(object)
