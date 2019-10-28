@@ -83,6 +83,7 @@ export default function State (info) {
    * @param {any} payload New data for this state
    */
   this.change = (payload = undefined) => {
+    if (payload === undefined) return this[symStateVal]
     if (!iftypeof(
       payload,
       this[symStateType],
@@ -90,7 +91,6 @@ export default function State (info) {
       `State - ${this.key}: `)
     ) return this[symStateVal]
 
-    if (payload === undefined) return this[symStateVal]
     if (JSON.stringify(this[symStateVal]) === JSON.stringify(payload)) return this[symStateVal]
 
     // ====================================== //
@@ -150,14 +150,15 @@ export default function State (info) {
    * Change value unseen
    */
   this.change.unseen = payload => {
+    if (payload === undefined) return this[symStateVal]
+
     if (!iftypeof(
       payload,
       this[symStateType],
       this.warn,
       `State - ${this.key}: `)
-    ) return this[symStateVal]
+    ) return false
 
-    if (payload === undefined) return this[symStateVal]
     if (JSON.stringify(this[symStateVal]) === JSON.stringify(payload)) return false
 
     // ====================================== //
