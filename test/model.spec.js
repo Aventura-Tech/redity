@@ -84,7 +84,7 @@ describe('Model: Concept', () => {
       }
     }
 
-    model.onListen = (payload, states, header) => {
+    model.onListen = async (payload, states, header) => {
       expect(payload).toEqual(expect.anything())
       expect(header).toMatchObject({
         key: 'modelTest',
@@ -172,29 +172,22 @@ describe('Model: Concept', () => {
       }
     }
 
-    await new Promise(resolve => {
-      model.onListen = async (payload, states, header) => {
-        const { dispatch1, dispatch2 } = header.actions
-        if (header.action === 'dispatch1') {
-          expect(dispatch1).toEqual(expect.any(Function))
-          expect(dispatch2).toBeFalsy()
-        }
-
-        if (header.action === 'dispatch2') {
-          expect(dispatch1).toBeFalsy()
-          expect(dispatch2).toEqual(expect.any(Function))
-        }
+    model.onListen = async (payload, states, header) => {
+      const { dispatch1, dispatch2 } = header.actions
+      if (header.action === 'dispatch1') {
+        expect(dispatch1).toEqual(expect.any(Function))
+        expect(dispatch2).toBeFalsy()
       }
 
-      model[symModelCreate](false) // creating model
-      const { dispatch1, dispatch2 } = model.dispatchers
-      dispatch1('Any Data', res => {
-        expect(res).toBeTruthy()
-        dispatch2({ name: 'MyName' }, (_res) => {
-          expect(_res).toBeTruthy()
-          setTimeout(resolve(), 1000)
-        })
-      })
-    })
+      if (header.action === 'dispatch2') {
+        expect(dispatch1).toBeFalsy()
+        expect(dispatch2).toEqual(expect.any(Function))
+      }
+    }
+
+    model[symModelCreate](false) // creating model
+    const { dispatch1, dispatch2 } = model.dispatchers
+    expect(await dispatch1('Any Data')).toBeTruthy()
+    expect(await dispatch2({ name: 'MyName' })).toBeTruthy()
   })
 })

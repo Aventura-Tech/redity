@@ -25,7 +25,7 @@ describe('Action: Logic', () => {
   it('Basic', async () => {
     const action = new Action('key1', 'This is a description')
     await new Promise(resolve => {
-      action.onListen = (payload, header) => {
+      action.onListen = async (payload, header) => {
         expect(header).toMatchObject({
           key: 'key1',
           description: 'This is a description',
@@ -43,15 +43,15 @@ describe('Action: Logic', () => {
     expect(action[symActionLoading]).toBeFalsy()
   })
 
-  it('Action type wait(default)', () => {
+  it('Action type wait(default)', async () => {
     let count = 0
     const action = new Action('key1', 'description')
 
     action.onListen = () => count++
 
-    expect(action.dispatch({})).toBeTruthy()
-    expect(action.dispatch([])).toBeFalsy()
-    expect(action.dispatch('')).toBeFalsy()
+    expect(await action.dispatch({})).toBeTruthy()
+    expect(await action.dispatch([])).toBeFalsy()
+    expect(await action.dispatch('')).toBeFalsy()
     action.done()
     expect(action.dispatch('dasd')).toBeTruthy()
     expect(count).toBe(2)
@@ -63,7 +63,7 @@ describe('Action: Logic', () => {
       type: 'pass'
     })
 
-    action.onListen = () => count++
+    action.onListen = async () => count++
 
     expect(action.dispatch({})).toBeTruthy()
     expect(action[symActionLoading]).toBeFalsy()
@@ -82,31 +82,38 @@ describe('Action: Logic', () => {
       type: 'then'
     })
 
-    action.onListen = () => count++
+    action.onListen = async () => {
+      count++
+      await new Promise(resolve => {
+        setTimeout(() => {
+          resolve(true)
+        }, 2000)
+      })
+    }
 
-    expect(action.dispatch({})).toBeTruthy()
-    expect(action.dispatch([])).toBeFalsy()
-    expect(action.dispatch({ name: 'user' })).toBeFalsy()
-    expect(action.memoryThen.length).toBe(2)
-    expect(action[symActionLoading]).toBeTruthy()
-    action.done() // resolve first action
-    action.done() // resolve last action
-    expect(action[symActionLoading]).toBeFalsy()
-    expect(action.dispatch('other data')).toBeTruthy()
-    expect(action.memoryThen.length).toBe(0)
-    expect(count).toBe(3)
+    action.dispatch({})
+    expect(await action.dispatch([])).toBeFalsy()
+    expect(await action.dispatch('Working :D')).toBeFalsy()
+    expect(count).toBe(1)
+    action.done()
+    await new Promise(resolve => {
+      setTimeout(() => {
+        expect(count).toBe(2)
+        resolve(true)
+      }, 2500)
+    })
   })
 
-  it('Data Payload', () => {
+  it('Data Payload', async () => {
     let count = 0
     const action = new Action('key1', 'description', {
       payload: [Object, Boolean]
     })
 
-    action.onListen = () => count++
+    action.onListen = async () => count++
 
-    expect(action.dispatch('String')).toBeFalsy()
-    expect(action.dispatch({ name: 'Hola Mundo :D' })).toBeTruthy()
+    expect(await action.dispatch('String')).toBeFalsy()
+    expect(await action.dispatch({ name: 'Hola Mundo :D' })).toBeTruthy()
     expect(count).toBe(1)
   })
 })
@@ -114,7 +121,7 @@ describe('Action: Logic', () => {
 describe('Action: Concept', () => {
   it('Test', () => {
     const action = new Action('testAction', 'This is a testing')
-    action.onListen = () => {
+    action.onListen = async () => {
 
     }
     expect(action.memoryThen).toEqual(expect.any(Array))

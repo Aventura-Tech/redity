@@ -61,8 +61,8 @@ export default function Dispatcher () {
     }
 
     for (const [key, action] of lists.entries()) {
-      action.onListen = (payload, header) => {
-        listener(payload, header, {
+      action.onListen = async (payload, header) => {
+        await listener(payload, header, {
           ...stateActions,
           [key]: () => {}
         })

@@ -1,4 +1,4 @@
-import { symActionKey, symActionLoading, symActionDescription, symActionListener, symActionResendEvent, symActionOnDone } from './utils/symbols'
+import { symActionKey, symActionLoading, symActionDescription, symActionListener, symActionResendEvent } from './utils/symbols'
 import { IsNotFunction, IsNotObject } from './utils/exceptions'
 import iftypeof from './utils/iftypeof'
 
@@ -55,7 +55,6 @@ function Action (key, description, options = {
 
   this[symActionLoading] = false
   this[symActionListener] = () => {}
-  this[symActionOnDone] = () => {}
   Object.freeze(this.options)
 
   /**
@@ -63,8 +62,7 @@ function Action (key, description, options = {
  * @param {any} payload Data
  * @param {function} onDone Avisa cuando la acción haya terminado
  */
-  this.dispatch = (payload, onDone = false) => {
-    if (typeof onDone === 'function') this[symActionOnDone] = onDone
+  this.dispatch = async (payload) => {
     if (!iftypeof(payload, this.options.payload, this.options.warn)) {
       return false
     }
@@ -86,7 +84,8 @@ function Action (key, description, options = {
     })
 
     if (this.options.type !== this.types.PASS) this[symActionLoading] = true
-    this[symActionListener](payload, header)
+
+    await this[symActionListener](payload, header)
 
     return true
   }
@@ -103,22 +102,22 @@ Object.defineProperty(Action.prototype, 'memoryThen', {
   enumerable: true
 })
 
-Action.prototype[symActionResendEvent] = function () {
+Action.prototype[symActionResendEvent] = async function () {
   const header = Object.freeze({
     key: this[symActionKey],
     description: this[symActionDescription],
     done: this.done.bind(this)
   })
-
-  this[symActionListener](this.memoryThen[this.memoryThen.length - 1], header)
+  const dataSaved = this.memoryThen[this.memoryThen.length - 1]
   this.memoryThen.length = 0
+  await this[symActionListener](dataSaved, header)
+  this.done()
 }
 
 /**
  * Informa a la acción que ya se dió por terminado
  */
 Action.prototype.done = function () {
-  this[symActionOnDone](true)
   if (this.options.type === this.types.THEN && this.memoryThen.length > 0) {
     this[symActionResendEvent]()
     return

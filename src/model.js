@@ -151,7 +151,7 @@ export default function (key = null) {
     // ====================================== //
     // Listen events by dispatcher               //
     // ====================================== //
-    dispatcher.onListen = (payload, headerDispatcher, actions) => {
+    dispatcher.onListen = async (payload, headerDispatcher, actions) => {
       const components = {}
       for (const [key, subscribed] of subcribes.entries()) {
         components[key] = {

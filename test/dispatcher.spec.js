@@ -9,59 +9,59 @@ const data = {
 
 describe('Dispatcher: contructor', () => {
   it('Instance', () => {
-    const actions = new Dispatcher()
-    expect(() => actions.init()).toThrow(IsNotObject('Dispatcher parameter'))
-    expect(() => actions.init('Example')).toThrow(IsNotObject('Dispatcher parameter'))
-    expect(() => actions.init([])).toThrow(IsNotObject('Dispatcher parameter'))
+    const dispatcher = new Dispatcher()
+    expect(() => dispatcher.init()).toThrow(IsNotObject('Dispatcher parameter'))
+    expect(() => dispatcher.init('Example')).toThrow(IsNotObject('Dispatcher parameter'))
+    expect(() => dispatcher.init([])).toThrow(IsNotObject('Dispatcher parameter'))
   })
 
   it('has', () => {
-    const actions = new Dispatcher()
-    expect(actions).toHaveProperty('init')
-    expect(actions).toHaveProperty('onListen')
-    expect(actions).toHaveProperty('size')
-    expect(actions).toHaveProperty('toMethod')
+    const dispatcher = new Dispatcher()
+    expect(dispatcher).toHaveProperty('init')
+    expect(dispatcher).toHaveProperty('onListen')
+    expect(dispatcher).toHaveProperty('size')
+    expect(dispatcher).toHaveProperty('toMethod')
   })
 
   it('Property', () => {
-    const actions = new Dispatcher()
-    actions.init(data)
+    const dispatcher = new Dispatcher()
+    dispatcher.init(data)
     const propAndMethods = {
       init: expect.any(Function),
       onListen: undefined,
       size: expect.any(Number),
       toMethod: expect.any(Function)
     }
-    expect(actions).toMatchObject(propAndMethods)
+    expect(dispatcher).toMatchObject(propAndMethods)
   })
 })
 
 describe('Dispatcher: Logic', () => {
-  const actions = new Dispatcher()
-  actions.init(data)
+  const dispatcher = new Dispatcher()
+  dispatcher.init(data)
   it('Listener on', () => {
     expect(() => {
-      actions.onListen = 'String'
+      dispatcher.onListen = 'String'
     }).toThrow(IsNotFunction('On property'))
     expect(() => {
-      actions.onListen = {}
+      dispatcher.onListen = {}
     }).toThrow(IsNotFunction('On property'))
     expect(() => {
-      actions.onListen = []
+      dispatcher.onListen = []
     }).toThrow(IsNotFunction('On property'))
     expect(() => {
-      actions.onListen = function () {}
+      dispatcher.onListen = function () {}
     })
   })
 })
 
 describe('Dispatcher: Concept', () => {
-  it('Creating and success', done => {
-    const actions = new Dispatcher()
-    actions.init(data)
-    expect(actions.size).toBe(3)
+  it('Creating and success', async () => {
+    const dispatcher = new Dispatcher()
+    dispatcher.init(data)
+    expect(dispatcher.size).toBe(3)
     let countListen = 0
-    actions.onListen = function (payload, action, header) {
+    dispatcher.onListen = async function (payload, action, header) {
       expect(payload).toEqual(expect.anything())
       expect(action).toMatchObject({
         key: expect.any(String),
@@ -71,7 +71,7 @@ describe('Dispatcher: Concept', () => {
       countListen++
     }
 
-    const listDispatcher = actions.toMethod()
+    const listDispatcher = dispatcher.toMethod()
     expect(listDispatcher).toMatchObject({
       action1: expect.any(Function),
       action2: expect.any(Function),
@@ -79,16 +79,15 @@ describe('Dispatcher: Concept', () => {
     })
     const countList = Object.keys(listDispatcher)
     expect(countList.length).toBe(3)
-    listDispatcher.action1('Anything')
-    listDispatcher.action2({})
+    await listDispatcher.action1('Anything')
+    await listDispatcher.action2({})
     expect(countListen).toBe(2)
-    done()
   })
 
-  it('Checking events', done => {
-    const actions = new Dispatcher()
-    actions.init(data)
-    actions.onListen = function (payload, action, header) {
+  it('Checking events', async () => {
+    const dispatcher = new Dispatcher()
+    dispatcher.init(data)
+    dispatcher.onListen = async function (payload, action, header) {
       expect(payload).toEqual(expect.any(Object))
       expect(header).toMatchObject({
         action1: false,
@@ -97,8 +96,7 @@ describe('Dispatcher: Concept', () => {
       })
     }
 
-    const { action2 } = actions.toMethod()
-    action2({ name: 'Example' })
-    done()
+    const { action2 } = dispatcher.toMethod()
+    await action2({ name: 'Example' })
   })
 })
