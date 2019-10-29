@@ -33,6 +33,10 @@ export default function State (info) {
   // Guarda un historial del estado         //
   // ====================================== //
   this[symStateHistories] = []
+  // ====================================== //
+  // Guarda el valor anterior               //
+  // ====================================== //
+  let valueBefore
 
   iftypeof(this[symStateVal], this[symStateType])
 
@@ -93,6 +97,7 @@ export default function State (info) {
 
     if (JSON.stringify(this[symStateVal]) === JSON.stringify(payload)) return this[symStateVal]
 
+    valueBefore = this[symStateVal]
     // ====================================== //
     // Saving values in the history           //
     // ====================================== //
@@ -174,6 +179,10 @@ export default function State (info) {
     this[symStateVal] = payload
     this[symStateCountChanges] += 1
     return true
+  }
+
+  this.change.before = () => {
+    return valueBefore
   }
 
   // ====================================== //

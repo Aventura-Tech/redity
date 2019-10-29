@@ -206,7 +206,7 @@ export default function (key = null) {
         // ====================================== //
           header.blockcode.end()
           headerDispatcher.done()
-          resolve(true)
+          resolve(res)
         // ====================================== //
         // If case the event if fail              //
         // ====================================== //
