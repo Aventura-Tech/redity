@@ -1,19 +1,14 @@
-import { symActionKey, symActionLoading, symActionDescription, symActionListener, symActionResendEvent } from './utils/symbols'
+import { symActionKey, symActionLoading, symActionDefaultValue, symActionListener, symActionResendEvent } from './utils/symbols'
 import { IsNotFunction, IsNotObject } from './utils/exceptions'
 import iftypeof from './utils/iftypeof'
 
 /**
  * Action Class
  * @param {string} key Key Action
- * @param {string} description Description for the action
+ * @param {string} defaultValue Value default
  * @param {object} options Options for Actions
  */
-function Action (key, description, options = {
-  payload: 'any',
-  type: 'wait',
-  passError: false,
-  warn: true
-}) {
+function Action (key, defaultValue, options = {}) {
   // ====================================== //
   // Types of Action                        //
   // ====================================== //
@@ -28,7 +23,7 @@ function Action (key, description, options = {
   // ====================================== //
   this[symActionKey] = key
 
-  this[symActionDescription] = description
+  this[symActionDefaultValue] = defaultValue
 
   if (typeof options !== 'object') throw IsNotObject('Action')
   this.options = {
@@ -62,15 +57,16 @@ function Action (key, description, options = {
  * @param {any} payload Data
  * @param {function} onDone Avisa cuando la acción haya terminado
  */
-  this.dispatch = async (payload) => {
-    if (!iftypeof(payload, this.options.payload, this.options.warn)) {
+  this.dispatch = async (payload = null) => {
+    const _payload = payload !== null ? payload : this[symActionDefaultValue]
+    if (!iftypeof(_payload, this.options.payload, this.options.warn)) {
       return false
     }
 
     if (this.options.type !== this.types.PASS) {
       if (this[symActionLoading]) {
         if (this.options.type === this.types.THEN) {
-          this.memoryThen.push(payload)
+          this.memoryThen.push(_payload)
         }
 
         return false
@@ -79,13 +75,13 @@ function Action (key, description, options = {
 
     const header = Object.freeze({
       key: this[symActionKey],
-      description: this[symActionDescription],
+      defaultValue: this[symActionDefaultValue],
       done: this.done.bind(this)
     })
 
     if (this.options.type !== this.types.PASS) this[symActionLoading] = true
 
-    await this[symActionListener](payload, header)
+    await this[symActionListener](_payload, header)
 
     return true
   }
@@ -105,7 +101,7 @@ Object.defineProperty(Action.prototype, 'memoryThen', {
 Action.prototype[symActionResendEvent] = async function () {
   const header = Object.freeze({
     key: this[symActionKey],
-    description: this[symActionDescription],
+    defaultValue: this[symActionDefaultValue],
     done: this.done.bind(this)
   })
   const dataSaved = this.memoryThen[this.memoryThen.length - 1]

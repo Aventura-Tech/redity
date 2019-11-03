@@ -1,5 +1,5 @@
 import Action from './../src/action'
-import { symActionKey, symActionDescription, symActionListener, symActionResendEvent, symActionLoading } from './../src/utils/symbols'
+import { symActionKey, symActionDefaultValue, symActionListener, symActionResendEvent, symActionLoading } from './../src/utils/symbols'
 
 describe('Action: contructor', () => {
   it('Properties and Method', () => {
@@ -8,7 +8,7 @@ describe('Action: contructor', () => {
       types: expect.any(Object),
       options: expect.any(Object),
       [symActionKey]: expect.any(String),
-      [symActionDescription]: expect.any(String),
+      [symActionDefaultValue]: expect.any(String),
       [symActionLoading]: expect.any(Boolean),
       [symActionListener]: expect.any(Function),
       [symActionResendEvent]: expect.any(Function)
@@ -23,12 +23,12 @@ describe('Action: contructor', () => {
 
 describe('Action: Logic', () => {
   it('Basic', async () => {
-    const action = new Action('key1', 'This is a description')
+    const action = new Action('key1', 'This is a defaultValue')
     await new Promise(resolve => {
       action.onListen = async (payload, header) => {
         expect(header).toMatchObject({
           key: 'key1',
-          description: 'This is a description',
+          defaultValue: 'This is a defaultValue',
           done: expect.any(Function)
         })
         expect(payload).toBe('Data')
@@ -45,7 +45,7 @@ describe('Action: Logic', () => {
 
   it('Action type wait(default)', async () => {
     let count = 0
-    const action = new Action('key1', 'description')
+    const action = new Action('key1', 'defaultValue')
 
     action.onListen = () => count++
 
@@ -59,7 +59,7 @@ describe('Action: Logic', () => {
 
   it('Action type pass', () => {
     let count = 0
-    const action = new Action('key1', 'description', {
+    const action = new Action('key1', 'defaultValue', {
       type: 'pass'
     })
 
@@ -78,7 +78,7 @@ describe('Action: Logic', () => {
 
   it('Action type then', async () => {
     let count = 0
-    const action = new Action('key1', 'description', {
+    const action = new Action('key1', 'defaultValue', {
       type: 'then'
     })
 
@@ -106,7 +106,7 @@ describe('Action: Logic', () => {
 
   it('Data Payload', async () => {
     let count = 0
-    const action = new Action('key1', 'description', {
+    const action = new Action('key1', 'defaultValue', {
       payload: [Object, Boolean]
     })
 

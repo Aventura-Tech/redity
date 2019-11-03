@@ -65,7 +65,7 @@ describe('Dispatcher: Concept', () => {
       expect(payload).toEqual(expect.anything())
       expect(action).toMatchObject({
         key: expect.any(String),
-        description: expect.any(String)
+        defaultValue: expect.any(String)
       })
       expect(header).toEqual(expect.any(Object))
       countListen++

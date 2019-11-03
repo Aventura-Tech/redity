@@ -52,7 +52,7 @@ export const symStatesListener = Symbol('States: listener[Function]')
 // Symbol of Action                       //
 // ====================================== //
 export const symActionKey = Symbol('Action: key[String]')
-export const symActionDescription = Symbol('Action: description[String]')
+export const symActionDefaultValue = Symbol('Action: defaultValue[any]')
 export const symActionLoading = Symbol('Action: loading[Boolean]')
 export const symActionListener = Symbol('Action Listener[function]')
 export const symActionResendEvent = Symbol('Action resendEvent[function]')
