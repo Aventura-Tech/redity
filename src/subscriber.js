@@ -36,7 +36,7 @@ export default function Subscriber (key = false, mapStateToProps = false) {
  * @param {object} allStates object of states
  */
 Subscriber.prototype[symSubscriberInit] = function (allStates) {
-  const statesDefined = this[symSubscriberMapStateToProps](allStates)
+  const statesDefined = this[symSubscriberMapStateToProps](allStates, {})
   if (typeof statesDefined !== 'object' || Array.isArray(statesDefined)) throw IsNotObject('mapStateToProps')
   this.statesDefined = statesDefined
 }
@@ -57,7 +57,7 @@ Subscriber.prototype.setProps = function (props) {
 // Generate a event                       //
 // ====================================== //
 Subscriber.prototype[symSubscriberGenerate] = function (keyState, nextPayloadState, allStates) {
-  const statesDefined = this[symSubscriberMapStateToProps]({ ...allStates, [keyState]: nextPayloadState })
+  const statesDefined = this[symSubscriberMapStateToProps]({ ...allStates, [keyState]: nextPayloadState }, {})
   if (JSON.stringify(statesDefined) === JSON.stringify(this.statesDefined)) return false
   this.statesDefined = statesDefined
 

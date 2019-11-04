@@ -28,7 +28,7 @@ export default function connect (modelKey, mapStateToProps = false, mapDispatchT
   // ====================================== //
   // Getting model by key                   //
   // ====================================== //
-  const Model = Redity.get(modelKey)
+  const Model = Redity.model.get(modelKey)
   // ====================================== //
   // If not found model is error            //
   // ====================================== //

@@ -87,7 +87,7 @@ describe('Action: Logic', () => {
       await new Promise(resolve => {
         setTimeout(() => {
           resolve(true)
-        }, 2000)
+        }, 1000)
       })
     }
 
@@ -100,7 +100,7 @@ describe('Action: Logic', () => {
       setTimeout(() => {
         expect(count).toBe(2)
         resolve(true)
-      }, 2500)
+      }, 1500)
     })
   })
 

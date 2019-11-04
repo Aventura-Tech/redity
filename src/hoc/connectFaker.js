@@ -18,7 +18,7 @@ export default function (modelKey, mapStateToProps = false, mapDispatchToProps =
       // ====================================== //
       // Generate states fakers                 //
       // ====================================== //
-      const res = mapStateToProps()
+      const res = mapStateToProps({}, {})
       if (typeof res === 'object' && !Array.isArray(res)) {
         statesToProps = res
       }
@@ -28,7 +28,7 @@ export default function (modelKey, mapStateToProps = false, mapDispatchToProps =
       // ====================================== //
       // Generate methods dispatchers fakers    //
       // ====================================== //
-      const res = mapDispatchToProps()
+      const res = mapDispatchToProps({}, {})
       if (typeof res === 'object' && !Array.isArray(res)) {
         for (const key in res) {
           actionsToProps = {

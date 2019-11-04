@@ -2,7 +2,7 @@
 import { symModelCreate, symSubscriberGenerate, symSubscriberInit } from './utils/symbols'
 import Exceptions from './utils/exceptions'
 
-import { PRIVATE } from './utils/mode'
+import { PRIVATE } from './utils/access'
 import States from './states'
 import Dispatcher from './dispatcher'
 import BlockCode from './blockcode'
@@ -15,10 +15,6 @@ const { IsNotObject } = Exceptions
  * @param {string} key Key Primary
  */
 export default function (key = null) {
-  // ====================================== //
-  // PRIVATE PROPERTY                       //
-  // ====================================== //
-
   const config = {
     access: PRIVATE,
     dev: true
@@ -30,15 +26,22 @@ export default function (key = null) {
   const dispatcher = new Dispatcher()
   const subcribes = new Map()
 
-  // ====================================== //
-  // PUBLIC PROPERTY                        //
-  // ====================================== //
+  Object.defineProperty(this, 'access', {
+    get: () => config.access,
+    set: value => {
+      config.access = value
+    },
+    configurable: false,
+    enumerable: true
+  })
+
   Object.defineProperty(this, 'key', {
     value: key,
     enumerable: true,
     configurable: false,
     writable: false
   })
+
   // ====================================== //
   // Return list methods of states          //
   // ====================================== //

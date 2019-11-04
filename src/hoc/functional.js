@@ -28,7 +28,7 @@ export default function (modelKey, mapStateToProps = false, mapDispatchToProps =
   // ====================================== //
   // Getting model by key                   //
   // ====================================== //
-  const Model = Redity.get(modelKey)
+  const Model = Redity.model.get(modelKey)
   // ====================================== //
   // If not found model fatal error         //
   // ====================================== //
@@ -53,7 +53,7 @@ export default function (modelKey, mapStateToProps = false, mapDispatchToProps =
     // to mapStateToProps and getting the     //
     // dispatcher defined                     //
     // ====================================== //
-    const dispatchersDefined = mapDispatchToProps(Model.dispatchers)
+    const dispatchersDefined = mapDispatchToProps(Model.dispatchers, {})
 
     // ====================================== //
     // For subcriber                          //
