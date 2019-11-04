@@ -60,29 +60,58 @@ Redity.model.get = key => {
   return Redity[symRedityModels].get(key)
 }
 
-Redity.model.private = () => {
+/** Return all models private
+ * @param {string} ignore key model for ignore
+ * @return {object}
+ */
+Redity.model.private = (ignore = null) => {
   const modelsPrivate = {}
   for (const [key, model] of Redity[symRedityModels].entries()) {
+    if (key === ignore) continue
     if (model.access === Access.PRIVATE) {
-      modelsPrivate[key] = model
+      modelsPrivate[key] = {
+        ...model,
+        states: false,
+        dispatchers: false,
+        statesValues: () => {}
+      }
     }
   }
   return modelsPrivate
 }
 
-Redity.model.protected = () => {
+/** Return all models protected
+ * @param {string} ignore key model for ignore
+ * @return {object}
+ */
+Redity.model.protected = (ignore = null) => {
   const modelsPrivate = {}
   for (const [key, model] of Redity[symRedityModels].entries()) {
+    if (key === ignore) continue
     if (model.access === Access.PROTECTED) {
-      modelsPrivate[key] = model
+      const statesOnlyRead = {}
+      const statesValues = model.states
+      for (const key in statesValues) {
+        statesOnlyRead[key] = () => statesValues[key]()
+      }
+      modelsPrivate[key] = {
+        ...model,
+        dispatchers: false,
+        states: statesOnlyRead
+      }
     }
   }
   return modelsPrivate
 }
 
-Redity.model.public = () => {
+/** Return all models public
+ * @param {string} ignore key model for ignore
+ * @return {object}
+ */
+Redity.model.public = (ignore = null) => {
   const modelsPrivate = {}
   for (const [key, model] of Redity[symRedityModels].entries()) {
+    if (key === ignore) continue
     if (model.access === Access.PUBLIC) {
       modelsPrivate[key] = model
     }
@@ -90,7 +119,7 @@ Redity.model.public = () => {
   return modelsPrivate
 }
 
-export default Object.freeze(Redity)
+export default Redity
 
 export {
   States,

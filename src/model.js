@@ -7,6 +7,7 @@ import States from './states'
 import Dispatcher from './dispatcher'
 import BlockCode from './blockcode'
 import Subscriber from './subscriber'
+import Redity from './index'
 
 const { IsNotObject } = Exceptions
 
@@ -50,6 +51,11 @@ export default function (key = null) {
     enumerable: true,
     configurable: false
   })
+
+  /** Return all values states
+   * @returns {object}
+   */
+  this.statesValues = () => states.values()
 
   // ====================================== //
   // Return list methods of dispatcher         //
@@ -172,13 +178,13 @@ export default function (key = null) {
         key: this.key,
         dispatchers: dispatcher.toMethod(),
         payload,
-        wait: () => {},
-        proceed: () => {},
         action: headerDispatcher.key,
         actions,
-        models: {},
+        models: {
+          ...Redity.model.public(this.key),
+          ...Redity.model.protected(this.key)
+        },
         history: {},
-        eventFail: false,
         components: Object.freeze(components),
         // ====================================== //
         // Creating new blockcode for debug and   //

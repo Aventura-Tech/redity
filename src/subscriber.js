@@ -1,5 +1,28 @@
 import { symSubscriberMapStateToProps, symSubscriberGenerate, symSubscriberListener, symSubscriberInit } from './utils/symbols'
 import { IsNotObject, IsNotFunction } from './utils/exceptions'
+import Redity from './index'
+
+const globalStates = () => {
+  const modelsPublic = Redity.model.public()
+  const modelsProtected = Redity.model.protected()
+  let globalStates = {}
+
+  for (const key in modelsPublic) {
+    globalStates = {
+      ...globalStates,
+      [key]: modelsPublic[key].statesValues()
+    }
+  }
+
+  for (const key in modelsProtected) {
+    globalStates = {
+      ...globalStates,
+      [key]: modelsProtected[key].statesValues()
+    }
+  }
+
+  return globalStates
+}
 
 let index = 0
 // ====================================== //
@@ -36,7 +59,7 @@ export default function Subscriber (key = false, mapStateToProps = false) {
  * @param {object} allStates object of states
  */
 Subscriber.prototype[symSubscriberInit] = function (allStates) {
-  const statesDefined = this[symSubscriberMapStateToProps](allStates, {})
+  const statesDefined = this[symSubscriberMapStateToProps](allStates, globalStates())
   if (typeof statesDefined !== 'object' || Array.isArray(statesDefined)) throw IsNotObject('mapStateToProps')
   this.statesDefined = statesDefined
 }
@@ -57,7 +80,7 @@ Subscriber.prototype.setProps = function (props) {
 // Generate a event                       //
 // ====================================== //
 Subscriber.prototype[symSubscriberGenerate] = function (keyState, nextPayloadState, allStates) {
-  const statesDefined = this[symSubscriberMapStateToProps]({ ...allStates, [keyState]: nextPayloadState }, {})
+  const statesDefined = this[symSubscriberMapStateToProps]({ ...allStates, [keyState]: nextPayloadState }, globalStates())
   if (JSON.stringify(statesDefined) === JSON.stringify(this.statesDefined)) return false
   this.statesDefined = statesDefined
 

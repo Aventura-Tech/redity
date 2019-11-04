@@ -8,27 +8,27 @@ import connectFaker from './connectFaker'
 
 /**
  * Connect a component with the model
- * @param {string} modelKey Key of Model
+ * @param {string} keyModel Key of Model
  * @param {function} mapStateToProps options
  * @param {function} mapDispatchToProps options
  * @returns {funtion}
  */
-export default function connect (modelKey, mapStateToProps = false, mapDispatchToProps = () => {}) {
+export default function connect (keyModel, mapStateToProps = false, mapDispatchToProps = () => {}) {
   // ====================================== //
   // If not string is fatal error           //
   // ====================================== //
-  if (typeof modelKey !== 'string') {
-    if (modelKey !== false) {
+  if (typeof keyModel !== 'string') {
+    if (keyModel !== false) {
       throw RequireKeyModel('connect')
     }
   }
 
-  if (modelKey === false) return connectFaker(modelKey, mapStateToProps, mapDispatchToProps)
+  if (keyModel === false) return connectFaker(keyModel, mapStateToProps, mapDispatchToProps)
 
   // ====================================== //
   // Getting model by key                   //
   // ====================================== //
-  const Model = Redity.model.get(modelKey)
+  const Model = Redity.model.get(keyModel)
   // ====================================== //
   // If not found model is error            //
   // ====================================== //
@@ -48,12 +48,19 @@ export default function connect (modelKey, mapStateToProps = false, mapDispatchT
     // ====================================== //
     if (!Component) throw IsNotComponent('connect')
 
+    if (!Component) throw IsNotComponent('connect')
+    const globalDispatch = {}
+    const modelsPublic = Redity.model.public()
+    for (const key in modelsPublic) {
+      if (key === keyModel) continue
+      globalDispatch[key] = modelsPublic[key].dispatchers
+    }
     // ====================================== //
     // Seting all dispatcher defined in init  //
     // to mapStateToProps and getting the     //
     // dispatchers defined                    //
     // ====================================== //
-    const dispatchersDefined = mapDispatchToProps(Model.dispatchers)
+    const dispatchersDefined = mapDispatchToProps(Model.dispatchers, globalDispatch)
 
     // ====================================== //
     // declared Subcriber, and his key        //

@@ -91,15 +91,12 @@ describe('Model: Concept', () => {
         dispatchers: expect.any(Object),
         payload: expect.anything(),
         resolve: expect.any(Function),
-        wait: expect.any(Function),
-        proceed: expect.any(Function),
         action: expect.any(String),
         actions: expect.any(Object),
         blockcode: expect.any(Object),
         models: expect.any(Object),
         components: expect.any(Object),
-        history: expect.any(Object),
-        eventFail: expect.any(Boolean)
+        history: expect.any(Object)
       })
       count++
     }
