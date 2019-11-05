@@ -5,7 +5,7 @@ import { symBCSetBlock, symBCLogBlock } from './utils/symbols'
  * BlockCode Class
  * @param {boolean} dev Mode Development
  */
-export default function (dev = true) {
+export default function (dev = false) {
   // ====================================== //
   // PRIVATE PROPERTIES                     //
   // ====================================== //
@@ -25,7 +25,7 @@ export default function (dev = true) {
   let index = -1
   let timeStart = 0
   let catchAgain = true
-  let hide = !dev
+  let hide = true
   const Exception = {
     IsStarted: () => new Error('Blockcode is already started'),
     NotStarted: () => new Error('Blockcode has not been started'),
@@ -250,7 +250,7 @@ export default function (dev = true) {
   /**
    * Unhide console
    */
-  this.unhide = () => {
+  this.show = () => {
     if (!this._dev) return
     hide = false
   }

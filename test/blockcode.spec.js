@@ -18,7 +18,7 @@ describe('BlockCode: Constructor', () => {
     expect(blockCode).toHaveProperty('resolve')
     expect(blockCode).toHaveProperty('end')
     expect(blockCode).toHaveProperty('hide')
-    expect(blockCode).toHaveProperty('unhide')
+    expect(blockCode).toHaveProperty('show')
   })
 
   it('Definition', () => {
