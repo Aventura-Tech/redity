@@ -1,4 +1,4 @@
-import { symActionKey, symActionLoading, symActionDefaultValue, symActionListener, symActionResendEvent } from './utils/symbols'
+import { symActionLoading, symActionDefaultValue, symActionListener, symActionResendEvent } from './utils/symbols'
 import { IsNotFunction, IsNotObject } from './utils/exceptions'
 import iftypeof from './utils/iftypeof'
 
@@ -21,7 +21,7 @@ function Action (key, defaultValue, options = {}) {
   // ====================================== //
   // Key of Action                          //
   // ====================================== //
-  this[symActionKey] = key
+  this.key = key
 
   this[symActionDefaultValue] = defaultValue
 
@@ -59,7 +59,12 @@ function Action (key, defaultValue, options = {}) {
  */
   this.dispatch = async (payload = null) => {
     const _payload = payload !== null ? payload : this[symActionDefaultValue]
-    if (!iftypeof(_payload, this.options.payload, this.options.warn)) {
+    if (!iftypeof(
+      _payload,
+      this.options.payload,
+      this.options.warn,
+      `Action - ${this.key}:`
+    )) {
       return false
     }
 
@@ -74,7 +79,7 @@ function Action (key, defaultValue, options = {}) {
     }
 
     const header = Object.freeze({
-      key: this[symActionKey],
+      key: this.key,
       defaultValue: this[symActionDefaultValue],
       done: this.done.bind(this)
     })
@@ -100,7 +105,7 @@ Object.defineProperty(Action.prototype, 'memoryThen', {
 
 Action.prototype[symActionResendEvent] = async function () {
   const header = Object.freeze({
-    key: this[symActionKey],
+    key: this.key,
     defaultValue: this[symActionDefaultValue],
     done: this.done.bind(this)
   })

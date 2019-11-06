@@ -8,7 +8,7 @@ import Enum from './enum'
 export default function iftypeof (data, typePayload = 'any', warn = true, label = '') {
   const ExceptionNotTypeOf = name => {
     //   eslint-disable-next-line no-console
-    if (warn) console.warn(`${label} Payload is not type of ${name}`)
+    if (warn) console.warn(`${label} Payload is not type of ${name}. Data: `, data)
   }
 
   if (typePayload !== 'any') {
@@ -47,6 +47,9 @@ export default function iftypeof (data, typePayload = 'any', warn = true, label 
         ExceptionNotTypeOf(`${typePayload.name}(${typePayload.values.toString()})`)
         return false
       }
+    } else if (typePayload.name === 'Array' && Array.isArray(data)) {
+      // ExceptionNotTypeOf(typePayload.name)
+      return true
     } else if (typePayload.name === 'Object' && Array.isArray(data)) {
       ExceptionNotTypeOf(typePayload.name)
       return false

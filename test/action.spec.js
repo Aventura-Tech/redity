@@ -1,5 +1,5 @@
 import Action from './../src/action'
-import { symActionKey, symActionDefaultValue, symActionListener, symActionResendEvent, symActionLoading } from './../src/utils/symbols'
+import { symActionDefaultValue, symActionListener, symActionResendEvent, symActionLoading } from './../src/utils/symbols'
 
 describe('Action: contructor', () => {
   it('Properties and Method', () => {
@@ -7,7 +7,7 @@ describe('Action: contructor', () => {
     expect(action).toMatchObject({
       types: expect.any(Object),
       options: expect.any(Object),
-      [symActionKey]: expect.any(String),
+      key: expect.any(String),
       [symActionDefaultValue]: expect.any(String),
       [symActionLoading]: expect.any(Boolean),
       [symActionListener]: expect.any(Function),

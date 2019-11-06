@@ -38,7 +38,7 @@ export default function State (info) {
   // ====================================== //
   let valueBefore
 
-  iftypeof(this[symStateVal], this[symStateType])
+  iftypeof(this[symStateVal], this[symStateType], this.warn, `State - ${this.key}: `)
 
   Object.defineProperty(this, 'val', {
     get: () => this[symStateVal],
@@ -92,8 +92,8 @@ export default function State (info) {
       payload,
       this[symStateType],
       this.warn,
-      `State - ${this.key}: `)
-    ) return this[symStateVal]
+      `State - ${this.key}: `
+    )) return this[symStateVal]
 
     if (JSON.stringify(this[symStateVal]) === JSON.stringify(payload)) return this[symStateVal]
 

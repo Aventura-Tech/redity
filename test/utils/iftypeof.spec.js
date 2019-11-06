@@ -13,6 +13,7 @@ describe('ifTypeOf', () => {
   it('type Constructor', () => {
     expect(iftypeof('string Data', String)).toBeTruthy()
     expect(iftypeof('string Data 2', Object, false)).toBeFalsy()
+    expect(iftypeof([], Array, false)).toBeTruthy()
     expect(iftypeof([], Object, false)).toBeFalsy()
     expect(iftypeof(true, Boolean)).toBeTruthy()
   })

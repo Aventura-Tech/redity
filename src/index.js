@@ -6,7 +6,7 @@ import connect, { connectFaker } from './hoc'
 import Subscriber from './subscriber'
 import { symRedityModels, symModelCreate } from './utils/symbols'
 import { IsNotFunction } from './utils/exceptions'
-import * as Access from './utils/access'
+import Access from './utils/access'
 /**
  * Redity class
  */
