@@ -85,6 +85,10 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
     // ====================================== //
     return function Wrapper (props) {
       // ====================================== //
+      // Creting force render                   //
+      // ====================================== //
+      const nextDefinedToProps = React.useState(Date.now())[1]
+      // ====================================== //
       // Simulate componentWillMount of Class   //
       // Component                              //
       // ====================================== //
@@ -105,6 +109,16 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
         // Getting states customize for user      //
         // ====================================== //
         statesDefinedToProps = subscriber.getStatesDefined()
+        // ====================================== //
+        // Listen changes of states               //
+        // ====================================== //
+        subscriber.onListen = states => {
+          statesDefinedToProps = { ...states }
+          // ====================================== //
+          // Force Render                           //
+          // ====================================== //
+          nextDefinedToProps({ ...states })
+        }
       }
 
       if (!started) {
@@ -116,25 +130,11 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
       // Seting props for render                //
       // ====================================== //
       subscriber.setProps(props)
-      // ====================================== //
-      // Creting force render                   //
-      // ====================================== //
-      const nextDefinedToProps = React.useState(Date.now())[1]
 
       // ====================================== //
       // Use effect for subscriber              //
       // ====================================== //
       React.useEffect(() => {
-        // ====================================== //
-        // Listen changes of states               //
-        // ====================================== //
-        subscriber.onListen = states => {
-          statesDefinedToProps = { ...states }
-          // ====================================== //
-          // Force Render                           //
-          // ====================================== //
-          nextDefinedToProps({ ...states })
-        }
         return () => {
           Model.deleteSubscribe(keyConnect)
           started = false
