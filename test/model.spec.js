@@ -53,6 +53,12 @@ describe('Model: Concept', () => {
         changeName: 'Change Name of User',
         changeEmail: 'Change Email of User'
       }
+
+      settings.dispatchers = {
+        changeName: {
+          now: true
+        }
+      }
     }
     model[symModelCreate]() // creating model
     expect(spy).toHaveBeenCalled()

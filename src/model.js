@@ -142,7 +142,7 @@ export default function (key = null) {
   }
 
   // ====================================== //
-  // METHODS PRIVATE                        //
+  // METHOD PROTECTED                       //
   // ====================================== //
   this[symModelCreate] = (development = true) => {
     initial(init, settings)
@@ -158,7 +158,7 @@ export default function (key = null) {
     }
 
     // ====================================== //
-    // Listen events by dispatcher               //
+    // Listen events by dispatcher            //
     // ====================================== //
     dispatcher.onListen = async (payload, headerDispatcher, actions) => {
       const components = {}
@@ -238,6 +238,13 @@ export default function (key = null) {
           resolve(true)
         })
       })
+    }
+
+    for (const keyDispatch in settings.dispatchers) {
+      if (settings.dispatchers[keyDispatch].now) {
+        const action = dispatcher.get(keyDispatch)
+        action.dispatch(action.defaultValue)
+      }
     }
   }
 

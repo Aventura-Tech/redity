@@ -1,5 +1,5 @@
 import Action from './../src/action'
-import { symActionDefaultValue, symActionListener, symActionResendEvent, symActionLoading } from './../src/utils/symbols'
+import { symActionListener, symActionResendEvent, symActionLoading } from './../src/utils/symbols'
 
 describe('Action: contructor', () => {
   it('Properties and Method', () => {
@@ -8,7 +8,6 @@ describe('Action: contructor', () => {
       types: expect.any(Object),
       options: expect.any(Object),
       key: expect.any(String),
-      [symActionDefaultValue]: expect.any(String),
       [symActionLoading]: expect.any(Boolean),
       [symActionListener]: expect.any(Function),
       [symActionResendEvent]: expect.any(Function)
@@ -18,6 +17,7 @@ describe('Action: contructor', () => {
     expect(action).toHaveProperty('dispatch')
     expect(action).toHaveProperty('onListen')
     expect(action).toHaveProperty('memoryThen')
+    expect(action).toHaveProperty('defaultValue')
   })
 })
 

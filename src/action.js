@@ -1,4 +1,4 @@
-import { symActionLoading, symActionDefaultValue, symActionListener, symActionResendEvent } from './utils/symbols'
+import { symActionLoading, symActionListener, symActionResendEvent } from './utils/symbols'
 import { IsNotFunction, IsNotObject } from './utils/exceptions'
 import iftypeof from './utils/iftypeof'
 
@@ -23,7 +23,7 @@ function Action (key, defaultValue, options = {}) {
   // ====================================== //
   this.key = key
 
-  this[symActionDefaultValue] = defaultValue
+  this.defaultValue = defaultValue
 
   if (typeof options !== 'object') throw IsNotObject('Action')
   this.options = {
@@ -58,7 +58,7 @@ function Action (key, defaultValue, options = {}) {
  * @param {function} onDone Avisa cuando la acción haya terminado
  */
   this.dispatch = async (payload = null) => {
-    const _payload = payload !== null ? payload : this[symActionDefaultValue]
+    const _payload = payload !== null ? payload : this.defaultValue
     if (!iftypeof(
       _payload,
       this.options.payload,
@@ -80,7 +80,7 @@ function Action (key, defaultValue, options = {}) {
 
     const header = Object.freeze({
       key: this.key,
-      defaultValue: this[symActionDefaultValue],
+      defaultValue: this.defaultValue,
       done: this.done.bind(this)
     })
 
@@ -106,7 +106,7 @@ Object.defineProperty(Action.prototype, 'memoryThen', {
 Action.prototype[symActionResendEvent] = async function () {
   const header = Object.freeze({
     key: this.key,
-    defaultValue: this[symActionDefaultValue],
+    defaultValue: this.defaultValue,
     done: this.done.bind(this)
   })
   const dataSaved = this.memoryThen[this.memoryThen.length - 1]
