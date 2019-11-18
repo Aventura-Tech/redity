@@ -1,4 +1,4 @@
-Redity
+Get Started
 ========
 
 Redity es una herramienta que ayuda a separar la lógica de la interfaz, basadose en modelos. El interfaz tiene interación con el modelo gracias a las acciones que puede generar y que es respondido en sus estados.
@@ -24,14 +24,14 @@ export default redity => {
       message: 'Hello word'
     }
     
-    initial.actions = {
-      changeMessage: 'This is a action example for message state'
+    initial.dispatchers = {
+      changeMessage: null
     }
   }
   
   // Listener
   redity.onListen = (payload, header, states) => {
-    if(header.events.changeMessage){
+    if(header.actions.changeMessage){
       states.message(res)
     }
   }
@@ -40,9 +40,9 @@ export default redity => {
 }
 ```
 
-Su propiedad `onListen` será el escuchador de los eventos generados por las acciones que se ejecuten en la interfaz.
-`payload`, será el dato que enviemos por action.
-`header` será en encargado de ofrecerte muchas herramientas de todo el sistemas, como los events generados por las acciones.
+Su propiedad `onListen` será el escuchador de las acciones generados por los dispatchers que se ejecuten en la interfaz.
+`payload`, será el dato que enviemos por el dispatch
+`header` será en encargado de ofrecerte muchas herramientas de todo el sistema, como las acciones.
 `states`, un objeto de métodos de estados que nos ayudará a cambiar su valor. Los estados son conectados al interfaz.
 
 ### Register
@@ -83,30 +83,36 @@ function MyComponent({message, changeMessage}){
   )
 }
 
-export default connect('myModel')(MyComponent)
+const mapStateToProps = states => ({
+  message: states.messsage
+})
+
+const mapDispatchToProps = dispatch => ({
+  changeMessage: dispatch.changeMessage
+})
+
+export default connect('myModel', mapStateToProps, mapDispatchToProps)(MyComponent)
 
 ```
 
 Y listo.
 
-Si generamos un click en el botom que creamos, mandará una orden al modelo que lo capturará el __listener__ donde ahí tu podras manejar la lógica, con esto estamos separando nuestra lógica de la interfaz.
+Si generamos un click en el botom que creamos, mandará una acción al modelo que lo capturará el __listener__ donde ahí tu podras manejar la lógica.
 
 #### Algunas configuraciones de Redity
 
 * __dev[Boolean]__, Al activar modo desarrollo se muestra ayuda visual en consola, pero en modo Producción esto no será necesario. por defecto es `true`
-* __blockcodeLog[Boolean]__, Oculta log generados por blockcodes. Por defecto es `true`. Si `dev` es `false` afectará a esta propiedad.
 
 ```js
 // register.js
 Redity.config.dev = false
-Redity.config.blockcodeLog = false
 ```
 
 ## Documentación
 
 * [Models]()
 * [States]()
-* [Actions]()
+* [Dispatcher]()
 * [Blockcode]()
 * [Question]()
 
@@ -116,69 +122,6 @@ Redity.config.blockcodeLog = false
 Te será de mucha ayuda para agilizar el trabajo, solo cópialo en las opciones de snippets en `javascript.json` y `javascriptreact.json`
 
 ```json
-{
-  "React Functional Component":{
-    "prefix": "react:fun",
-    "body": [
-      "import React from 'react'",
-      "import PropTypes from 'prop-types'",
-      "",   
-      "export default function $1 () {",
-      "\treturn ($2)",
-      "}",
-      "",
-      "$1.propTypes = {",
-      "\t// your props...",
-      "}",
-      ""
-    ]
-  },
-
-  "React Arrow Component": {
-    "prefix": "react:arrow",
-    "body": [
-      "import React from 'react'",
-      "import PropTypes from 'prop-types'",
-      "",   
-      "const $1 = () => {",
-      "\treturn ($2)",
-      "}",
-      "",
-      "$1.propTypes = {",
-      "\t// your props...",
-      "}",
-      "",
-      "export default $1"
-    ]
-  },
-
-  "Comment Block": {
-    "prefix": "comm:block",
-    "body": [
-      "// ====================================== //",
-      "// $1 //",
-      "// ====================================== //"
-    ]
-  },
-
-  "Comment Block Large": {
-    "prefix": "comm:block-large",
-    "body": [
-      "// =========================================================================== //",
-      "// $1 //",
-      "// =========================================================================== //"
-    ]
-  },
-
-  "Commnect Block Code": {
-    "prefix": "comm:blockcode",
-    "body": [
-      "// ============================================ //",
-      "/**/ $1",
-      "// ============================================ //"
-    ]
-  },
-
   "Redity Main": {
     "prefix": "redity:index",
     "body": [
@@ -206,10 +149,9 @@ Te será de mucha ayuda para agilizar el trabajo, solo cópialo en las opciones 
       "\t\t$1",
       "\t}",
       "",
-      "\tinitial.actions = {",
+      "\tinitial.dispatchers = {",
       "\t\t$2",      
       "\t}",
-      "\tsettings.model.access: 'private'",
       "}"
     ]
   },
@@ -217,14 +159,11 @@ Te será de mucha ayuda para agilizar el trabajo, solo cópialo en las opciones 
   "Redity onListen": {
     "prefix": "redity:listen",
     "body": [
-      "export default async (payload, header, states) => {",
-      "\tconst { events, blockcode } = header",
-      "\tconst { $1 } = events",
-      "\tconst { block } = blockcode",
+      "export default async (payload, states, header) => {",
+      "\tconst { $1 } = header.actions",
+      "\tconst { block, show } = header.blockcode",
+      "\tshow()",
       "",
-      "\t// ====================================== //",
-      "\t// condition...                           //",
-      "\t// ====================================== //",
       "\tif ($2) {",
       "\t\t$3",
       "\t}",
@@ -237,14 +176,11 @@ Te será de mucha ayuda para agilizar el trabajo, solo cópialo en las opciones 
   "Redity onFail": {
     "prefix": "redity:fail",
     "body": [
-      "export default async (payload, header, states) => {",
-      "\tconst { events, blockcode } = header",
-      "\tconst { $1 } = events",
+      "export default async (catchErr, states, header) => {",
+      "\tconst { $1 } = header.actions",
+      "\tconst { num } = header.blockcode",
       "",
-      "\t// ====================================== //",
-      "\t// condition...                           //",
-      "\t// ====================================== //",
-      "\tif ($2 && blockcode.num === 1) {",
+      "\tif ($2 && num === 1) {",
       "\t\t$3",
       "\t}",
       "",
@@ -260,14 +196,12 @@ Te será de mucha ayuda para agilizar el trabajo, solo cópialo en las opciones 
       "\t$3: state.$3",
       "})",
       "",
-      "const mapActionToProps = actions => ({",
-      "\t$4: actions.$4",
+      "const mapDispatchToProps = dispatch => ({",
+      "\t$4: dispatch.$4",
       "",
-      "export default connect('$1', mapStateToProps, mapActionToProps)($2)",
+      "export default connect('$1', mapStateToProps, mapDispatchToProps)($2)",
       ""
     ],
     "description": "Conexion del Modelo de Redity al Componente, requiere importar su método connect"
   }
-
-}
 ```
