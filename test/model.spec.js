@@ -15,9 +15,11 @@ const dataExample = [
 
 describe('Model: Constructor', () => {
   it('Props and Methods', () => {
-    const model = new Model()
+    const model = new Model('anyKey')
 
     const props = {
+      key: expect.any(String),
+      config: expect.any(Object),
       states: expect.any(Object),
       dispatchers: expect.any(Object),
       init: undefined,
@@ -33,7 +35,7 @@ describe('Model: Constructor', () => {
 })
 
 describe('Model: Concept', () => {
-  const model = new Model()
+  const model = new Model('otherKey')
   it('init', done => {
     const spy = jest.spyOn(States.prototype, 'init')
     model.init = (initial, settings) => {
@@ -41,7 +43,6 @@ describe('Model: Concept', () => {
       expect(initial).toHaveProperty('dispatchers')
       expect(settings).toHaveProperty('states')
       expect(settings).toHaveProperty('dispatchers')
-      expect(settings).toHaveProperty('access')
       expect(settings).toHaveProperty('dev')
 
       initial.states = {

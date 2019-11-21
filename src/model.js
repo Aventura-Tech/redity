@@ -2,7 +2,6 @@
 import { symModelCreate, symSubscriberGenerate, symSubscriberInit } from './utils/symbols'
 import Exceptions from './utils/exceptions'
 
-import { PRIVATE } from './utils/access'
 import States from './states'
 import Dispatcher from './dispatcher'
 import BlockCode from './blockcode'
@@ -15,33 +14,20 @@ const { IsNotObject } = Exceptions
  * Model Class
  * @param {string} key Key Primary
  */
-export default function (key = null) {
-  const config = {
-    access: PRIVATE,
-    dev: true
+export default function (key) {
+  this.key = key
+  this.config = {
+    dev: true,
+    publicStates: false,
+    publicDispatchers: false
   }
+
   let listener = async () => {}
   let fail = async () => {}
   let initial = () => {}
   const states = new States()
   const dispatcher = new Dispatcher()
-  const subcribes = new Map()
-
-  Object.defineProperty(this, 'access', {
-    get: () => config.access,
-    set: value => {
-      config.access = value
-    },
-    configurable: false,
-    enumerable: true
-  })
-
-  Object.defineProperty(this, 'key', {
-    value: key,
-    enumerable: true,
-    configurable: false,
-    writable: false
-  })
+  const subscribes = new Map()
 
   // ====================================== //
   // Return list methods of states          //
@@ -127,7 +113,8 @@ export default function (key = null) {
     states: {},
     dispatchers: {},
     dev: true,
-    access: PRIVATE
+    publicStates: false,
+    publicDispatchers: false
   }
 
   const prepare = () => {
@@ -137,22 +124,18 @@ export default function (key = null) {
     if (typeof settings.dispatchers !== 'object' || Array.isArray(settings.dispatchers)) throw IsNotObject('initial')
     states.init(init.states, settings.states)
     dispatcher.init(init.dispatchers, settings.dispatchers)
-    config.dev = settings.dev
-    config.access = settings.access
+    this.config = { ...settings }
   }
 
-  // ====================================== //
-  // METHOD PROTECTED                       //
-  // ====================================== //
   this[symModelCreate] = (development = true) => {
     initial(init, settings)
     prepare()
-    const dev = development ? config.dev : false
+    const dev = development ? this.config.dev : false
     // ====================================== //
     // Listen changes values of States        //
     // ====================================== //
     states.onListen = (key, payload) => {
-      for (const subscribed of subcribes.entries()) {
+      for (const subscribed of subscribes.entries()) {
         subscribed[1][symSubscriberGenerate](key, payload, states.values())
       }
     }
@@ -162,7 +145,7 @@ export default function (key = null) {
     // ====================================== //
     dispatcher.onListen = async (payload, headerDispatcher, actions) => {
       const components = {}
-      for (const [key, subscribed] of subcribes.entries()) {
+      for (const [key, subscribed] of subscribes.entries()) {
         components[key] = {
           props: subscribed.props,
           hide: () => {},
@@ -170,6 +153,19 @@ export default function (key = null) {
           replace: () => {}
         }
       }
+
+      const allModels = Redity.model.all(this.key)
+      const models = {}
+      for (const key in allModels) {
+        models[key] = {}
+        if (allModels[key].config.publicStates) {
+          models[key].states = allModels[key].states
+        }
+        if (allModels[key].config.publicDispatchers) {
+          models[key].dispatchers = allModels[key].dispatchers
+        }
+      }
+
       // ====================================== //
       // Structuring header for onListen and    //
       // onFail                                 //
@@ -180,10 +176,7 @@ export default function (key = null) {
         payload,
         action: headerDispatcher.key,
         actions,
-        models: {
-          ...Redity.model.public(this.key),
-          ...Redity.model.protected(this.key)
-        },
+        models,
         history: {},
         components: Object.freeze(components),
         // ====================================== //
@@ -259,11 +252,11 @@ export default function (key = null) {
   this.subscribe = subscriber => {
     if (!(subscriber instanceof Subscriber)) throw new Error('Require a instance of Subscriber')
     subscriber[symSubscriberInit](states.values())
-    subcribes.set(subscriber.key, subscriber)
+    subscribes.set(subscriber.key, subscriber)
     return subscriber.key
   }
 
   this.deleteSubscribe = key => {
-    subcribes.delete(key)
+    subscribes.delete(key)
   }
 }

@@ -50,10 +50,12 @@ export default function connect (keyModel, mapStateToProps = false, mapDispatchT
 
     if (!Component) throw IsNotComponent('connect')
     const globalDispatch = {}
-    const modelsPublic = Redity.model.public()
-    for (const key in modelsPublic) {
+    const allModels = Redity.model.all()
+    for (const key in allModels) {
       if (key === keyModel) continue
-      globalDispatch[key] = modelsPublic[key].dispatchers
+      if (allModels[key].config.publicDispatchers) {
+        globalDispatch[key] = allModels[key].dispatchers
+      }
     }
     // ====================================== //
     // Seting all dispatcher defined in init  //
@@ -79,7 +81,7 @@ export default function connect (keyModel, mapStateToProps = false, mapDispatchT
         // ====================================== //
         // Creating subscriber for manage states  //
         // ====================================== //
-        subscriber = new Subscriber(customizeKeyComponent, mapStateToProps)
+        subscriber = new Subscriber(customizeKeyComponent, mapStateToProps, keyModel)
         // ====================================== //
         // Seting props for render                //
         // ====================================== //
