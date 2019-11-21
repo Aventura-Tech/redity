@@ -7,7 +7,7 @@ const globalStates = (keyModel) => {
   const globalStates = {}
   for (const key in allModels) {
     if (allModels[key].config.publicStates) {
-      globalStates[key] = allModels[key].states
+      globalStates[key] = allModels[key].statesValues()
     }
   }
   return globalStates
