@@ -27,7 +27,9 @@ describe('Model: Constructor', () => {
       onFail: undefined,
       [symModelCreate]: expect.any(Function),
       subscribe: expect.any(Function),
-      deleteSubscribe: expect.any(Function)
+      deleteSubscribe: expect.any(Function),
+      disableDispatch: expect.any(Function),
+      enableDispatch: expect.any(Function)
     }
 
     expect(model).toMatchObject(props)

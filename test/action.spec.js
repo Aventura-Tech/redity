@@ -2,15 +2,17 @@ import Action from './../src/action'
 import { symActionListener, symActionResendEvent, symActionLoading } from './../src/utils/symbols'
 
 describe('Action: contructor', () => {
+  const action = new Action('testAction', 'This is a testing')
   it('Properties and Method', () => {
-    const action = new Action('testAction', 'This is a testing')
     expect(action).toMatchObject({
       types: expect.any(Object),
       options: expect.any(Object),
       key: expect.any(String),
       [symActionLoading]: expect.any(Boolean),
       [symActionListener]: expect.any(Function),
-      [symActionResendEvent]: expect.any(Function)
+      [symActionResendEvent]: expect.any(Function),
+      enable: expect.any(Function),
+      disable: expect.any(Function)
     })
 
     expect(action).toHaveProperty('done')
@@ -18,6 +20,11 @@ describe('Action: contructor', () => {
     expect(action).toHaveProperty('onListen')
     expect(action).toHaveProperty('memoryThen')
     expect(action).toHaveProperty('defaultValue')
+  })
+
+  it('Properties of dispatch', () => {
+    expect(action.dispatch).toHaveProperty('disable')
+    expect(action.dispatch).toHaveProperty('enable')
   })
 })
 

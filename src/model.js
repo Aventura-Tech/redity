@@ -259,4 +259,7 @@ export default function (key) {
   this.deleteSubscribe = key => {
     subscribes.delete(key)
   }
+
+  this.disableDispatch = dispatcher.disable
+  this.enableDispatch = dispatcher.enable
 }

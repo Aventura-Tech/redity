@@ -21,6 +21,8 @@ describe('Dispatcher: contructor', () => {
     expect(dispatcher).toHaveProperty('onListen')
     expect(dispatcher).toHaveProperty('size')
     expect(dispatcher).toHaveProperty('toMethod')
+    expect(dispatcher).toHaveProperty('disable')
+    expect(dispatcher).toHaveProperty('enable')
   })
 
   it('Property', () => {

@@ -18,6 +18,22 @@ function Action (key, defaultValue, options = {}) {
     THEN: 'then'
   })
 
+  let disabled = false
+
+  /**
+   * Disabled action of dispatch
+   */
+  this.disable = () => {
+    disabled = true
+  }
+
+  /**
+   * Enabled action of dispatch
+   */
+  this.enable = () => {
+    disabled = false
+  }
+
   // ====================================== //
   // Key of Action                          //
   // ====================================== //
@@ -58,6 +74,7 @@ function Action (key, defaultValue, options = {}) {
  * @param {function} onDone Avisa cuando la acción haya terminado
  */
   this.dispatch = async (payload = null) => {
+    if (disabled) return false
     const _payload = payload !== null ? payload : this.defaultValue
     if (!iftypeof(
       _payload,
@@ -90,6 +107,11 @@ function Action (key, defaultValue, options = {}) {
 
     return true
   }
+  this.dispatch.disable = this.disable
+  this.dispatch.enable = this.enable
+
+  this.disable = this.disable.bind(this)
+  this.enable = this.enable.bind(this)
   this.dispatch.bind(this)
 }
 

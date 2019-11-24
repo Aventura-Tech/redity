@@ -6,15 +6,10 @@ import { symActionLoading } from './utils/symbols'
  * Dispatcher Class
  */
 export default function Dispatcher () {
-  // ====================================== //
-  // PRIVATE PROPERTY                       //
-  // ====================================== //
   // List of Dispatcher
   const lists = new Map()
   let listener = async () => {}
-  // ====================================== //
-  // PUBLIC PROPERTY                        //
-  // ====================================== //
+
   const Public = {
     onListen: {
       set: cb => {
@@ -31,14 +26,8 @@ export default function Dispatcher () {
     }
   }
 
-  // ====================================== //
-  // CONSTRUCTOR                            //
-  // ====================================== //
   Object.defineProperties(this, Public)
 
-  // ====================================== //
-  // METHODS PUBLICS                        //
-  // ====================================== //
   /**
    * create actions
    * @param {object} actions A list object for create actions
@@ -67,6 +56,28 @@ export default function Dispatcher () {
           [key]: () => {}
         })
       }
+    }
+  }
+
+  /**
+   * Disable dispatch
+   */
+  this.disable = (...keys) => {
+    for (const key of keys) {
+      const dispatch = lists.get(key)
+      if (dispatch === undefined) throw new Error(`Dispatch "${key}" not found`)
+      dispatch.disable()
+    }
+  }
+
+  /**
+   * Enable dispatch
+   */
+  this.enable = (...keys) => {
+    for (const key of keys) {
+      const dispatch = lists.get(key)
+      if (dispatch === undefined) throw new Error(`Dispatch "${key}" not found`)
+      dispatch.disable()
     }
   }
 

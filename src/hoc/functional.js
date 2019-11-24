@@ -34,7 +34,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
   // ====================================== //
   if (!Model) {
     // eslint-disable-next-line no-console
-    console.error(ModelNotFound('connect'))
+    console.error(ModelNotFound(`connect "${keyModel}"`))
     return () => Template('error connect: Model not found in the register', 'error')
   }
 
