@@ -43,7 +43,7 @@ function Action (key, defaultValue, options = {}) {
 
   if (typeof options !== 'object') throw IsNotObject('Action')
   this.options = {
-    payload: 'any',
+    typeValue: 'any',
     type: this.types.WAIT,
     passError: false,
     warn: true,
@@ -78,7 +78,7 @@ function Action (key, defaultValue, options = {}) {
     const _payload = payload !== null ? payload : this.defaultValue
     if (!iftypeof(
       _payload,
-      this.options.payload,
+      this.options.typeValue,
       this.options.warn,
       `Action - ${this.key}:`
     )) {

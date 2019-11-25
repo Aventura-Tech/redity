@@ -21,7 +21,7 @@ States.prototype.init = function (states, options = {}) {
 
   for (const key in states) {
     const state = new State({
-      type: 'any',
+      typeValue: 'any',
       history: false,
       deep: 2,
       warn: true,

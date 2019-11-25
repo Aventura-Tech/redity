@@ -38,7 +38,7 @@ describe('State', () => {
     const state = new State({
       val: 'Erick',
       key: 'User',
-      type: [String, Boolean],
+      typeValue: [String, Boolean],
       warn: false
     })
 

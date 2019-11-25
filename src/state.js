@@ -19,7 +19,7 @@ export default function State (info) {
   // ====================================== //
   // Type Value                             //
   // ====================================== //
-  this[symStateType] = info.type ? info.type : 'any'
+  this[symStateType] = info.typeValue ? info.typeValue : 'any'
   // ====================================== //
   // Execute when exist a change in value   //
   // ====================================== //

@@ -114,7 +114,7 @@ describe('Action: Logic', () => {
   it('Data Payload', async () => {
     let count = 0
     const action = new Action('key1', 'defaultValue', {
-      payload: [Object, Boolean]
+      typeValue: [Object, Boolean]
     })
 
     action.onListen = async () => count++
