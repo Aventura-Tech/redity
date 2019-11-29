@@ -7,6 +7,7 @@ export default function State (info) {
   // ====================================== //
   // Value of this State                    //
   // ====================================== //
+  const reserveValue = JSON.stringify(info.val)
   this[symStateVal] = info.val
   // ====================================== //
   // Saving history of this           state //
@@ -120,6 +121,14 @@ export default function State (info) {
     return this[symStateVal]
   }
 
+  /**
+   * Return to init value
+   */
+  this.change.init = () => {
+    const initValue = JSON.parse(reserveValue)
+    this.change(initValue)
+  }
+
   this.change.value = () => {
     const payload = this[symStateVal]
     if (typeof payload === 'object' && !Array.isArray(payload)) {
@@ -179,6 +188,11 @@ export default function State (info) {
     this[symStateVal] = payload
     this[symStateCountChanges] += 1
     return true
+  }
+
+  this.change.initUnseen = () => {
+    const initValue = JSON.parse(reserveValue)
+    this.change.unseen(initValue)
   }
 
   this.change.before = () => {
