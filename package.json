@@ -1,9 +1,11 @@
 {
   "name": "redity",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Model based",
   "main": "lib/index.js",
+  "homepage": "https://github.com/Aventura-Tech",
   "repository": "https://github.com/Aventura-Tech/redity",
+  "bugs": "https://github.com/Aventura-Tech/redity/issues",
   "scripts": {
     "build": "babel src --out-dir lib",
     "test": "jest ./test",
@@ -25,7 +27,10 @@
     "mvvm",
     "model"
   ],
-  "author": "Erick <ertriilive@gmail.com> (https://github.com/ertrii)",
+  "authors": [
+    "Erick <ertriilive@gmail.com> (https://github.com/ertrii)",
+    "Luigui <luiguimario@gmail.com> (https://github.com/luiguimario)"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@babel/cli": "^7.6.2",
@@ -81,7 +86,7 @@
     "@babel/runtime": "^7.6.3"
   },
   "peerDependencies": {
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2"
+    "react": "^16.8.0",
+    "react-dom": "^16.8.0"
   }
 }

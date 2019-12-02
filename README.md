@@ -7,7 +7,7 @@ Redity es una herramienta que ayuda a separar la lógica de la interfaz.
 npm install redity
 ```
 
-[Leer mas de la documentación](https://github.com/ertrii/redity/tree/master/docs)
+[Leer mas de la documentación](https://github.com/Aventura-Tech/redity/tree/master/docs)
 
 
 ### Models
@@ -32,7 +32,7 @@ export default redity => {
   // Listener
   redity.onListen = (payload, states, header) => {
     if(header.actions.changeMessage){
-      states.message(res)
+      states.message(payload)
     }
   }
   
@@ -101,11 +101,12 @@ Si generamos un click en el botom que creamos, mandará una acción al modelo qu
 
 ## Documentación
 
-* [Models](https://github.com/ertrii/redity/blob/master/docs/2.%20Models.md)
+* [Models](https://github.com/Aventura-Tech/redity/blob/master/docs/2.%20Models.md)
 * [States](https://github.com/ertrii/redity/blob/master/docs/3.%20States.md)
-* [Dispatcher](https://github.com/ertrii/redity/blob/master/docs/4.%20Dispatcher.md)
-* [Blockcode](https://github.com/ertrii/redity/blob/master/docs/5.%20Blockcode.md)
-* [Question](https://github.com/ertrii/redity/blob/master/docs/6.%20Question.md)
+* [Dispatcher](https://github.com/Aventura-Tech/redity/blob/master/docs/4.%20Dispatcher.md)
+* [Blockcode](https://github.com/Aventura-Tech/redity/blob/master/docs/5.%20Blockcode.md)
+* [Testing](https://github.com/Aventura-Tech/redity/blob/master/docs/6.%20Testing.md)
+* [Question](https://github.com/Aventura-Tech/redity/blob/master/docs/7.%20Question.md)
 
 
 ## Snippets
