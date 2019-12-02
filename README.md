@@ -117,14 +117,14 @@ Te será de mucha ayuda para agilizar el trabajo, solo cópialo en las opciones 
   "Redity Main": {
     "prefix": "redity:index",
     "body": [
-      "import initial from './initial'",
-      "import listener from './listener'",
+      "import init from './init'",
+      "import listen from './listen'",
       "import fail from './fail'",
       "",
       "export default redity => {",
-      "\tredity.init = initial",
+      "\tredity.init = init",
       "",
-      "\tredity.onListen = listener",
+      "\tredity.onListen = listen",
       "\tredity.onFail = fail",
       "",
       "\treturn redity",
