@@ -1,9 +1,9 @@
 {
   "presets": [
     "@babel/preset-env",
+    "@babel/preset-typescript",
     // "minify",
-    "@babel/preset-react",
-    "@babel/preset-typescript"
+    "@babel/preset-react"
   ],
   "plugins": [
     [
@@ -11,7 +11,9 @@
       {
         "regenerator": true
       }
-    ]
+    ],
+    "@babel/plugin-proposal-class-properties",
+    "@babel/plugin-transform-typescript"
   ],
   "comments": true
 }

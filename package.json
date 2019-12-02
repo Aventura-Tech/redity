@@ -5,8 +5,8 @@
   "main": "lib/index.js",
   "scripts": {
     "build": "babel src --out-dir lib",
-    "test": "jest ./test",
-    "test:watch": "jest --watch ./test"
+    "test": "jest ./tstest",
+    "test:watch": "jest --watch ./tstest"
   },
   "files": [
     "lib",
@@ -21,6 +21,8 @@
   "devDependencies": {
     "@babel/cli": "^7.6.2",
     "@babel/core": "^7.6.2",
+    "@babel/plugin-proposal-class-properties": "^7.7.4",
+    "@babel/plugin-transform-typescript": "^7.7.4",
     "@babel/preset-env": "^7.6.2",
     "@babel/preset-react": "^7.0.0",
     "@babel/preset-typescript": "^7.7.4",
@@ -64,6 +66,7 @@
       "./node_modules",
       "./src",
       "./config",
+      "./test",
       "package.json"
     ]
   },

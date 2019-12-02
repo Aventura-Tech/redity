@@ -1,4 +1,4 @@
-import State from './state'
+import State from './_state'
 import { symStatesRegisters, symStatesListener } from './utils/symbols'
 
 function States () {

@@ -1,4 +1,4 @@
-import State from '../src/state'
+import State from '../src/_state'
 
 describe('State', () => {
   it('Constructor', () => {
