@@ -1,4 +1,4 @@
-Get Started
+Redity
 ========
 
 Redity es una herramienta que ayuda a separar la lógica de la interfaz.
