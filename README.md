@@ -30,7 +30,7 @@ export default redity => {
   }
   
   // Listener
-  redity.onListen = (payload, header, states) => {
+  redity.onListen = (payload, states, header) => {
     if(header.actions.changeMessage){
       states.message(res)
     }
@@ -42,8 +42,8 @@ export default redity => {
 
 Su propiedad `onListen` será el escuchador de las acciones generados por los dispatchers que se ejecuten en la interfaz.
 `payload`, será el dato que enviemos por el dispatch.
-`header` será en encargado de ofrecerte muchas herramientas de todo el sistema, como las acciones.
 `states`, un objeto de métodos de estados que nos ayudará a cambiar su valor. Los estados son conectados al interfaz.
+`header` será en encargado de ofrecerte muchas herramientas de todo el sistema, como las acciones.
 
 ### Register
 
@@ -54,7 +54,7 @@ Crea un archivo register en la raíz de tu app eh importa tu modelo y registralo
 // src/register.js
 import Redity from 'redity'
 
-import MyModel from './models/example.model.js'
+import MyModel from './models/MyModel.js'
 Redity.register('myModel', MyModel)
 ```
 Importalo a tu app
@@ -64,7 +64,7 @@ import './register'
 // ...
 ```
 
-Puedes registrar varios o reusar el componente.
+> Puedes registrar varios o reusar el componente.
 
 ### Connect
 
@@ -98,15 +98,6 @@ export default connect('myModel', mapStateToProps, mapDispatchToProps)(MyCompone
 Y listo.
 
 Si generamos un click en el botom que creamos, mandará una acción al modelo que lo capturará el __listener__ donde ahí tu podras manejar la lógica.
-
-#### Algunas configuraciones de Redity
-
-* __dev[Boolean]__, Al activar modo desarrollo se muestra ayuda visual en consola, pero en modo Producción esto no será necesario. por defecto es `true`
-
-```js
-// register.js
-Redity.config.dev = false
-```
 
 ## Documentación
 
