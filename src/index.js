@@ -6,6 +6,7 @@ import connect, { connectFaker } from './hoc'
 import Subscriber from './subscriber'
 import { symRedityModels, symModelCreate } from './utils/symbols'
 import { IsNotFunction } from './utils/exceptions'
+import Enum from './utils/enum'
 /**
  * Redity class
  */
@@ -73,5 +74,6 @@ export {
   Blockcode,
   connect,
   Subscriber,
-  connectFaker
+  connectFaker,
+  Enum
 }
