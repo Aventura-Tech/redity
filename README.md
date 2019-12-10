@@ -1,4 +1,4 @@
-Get Started
+Redity
 ========
 
 Redity es una herramienta que ayuda a separar la lógica de la interfaz.
@@ -7,7 +7,7 @@ Redity es una herramienta que ayuda a separar la lógica de la interfaz.
 npm install redity
 ```
 
-[Leer mas de la documentación](https://github.com/ertrii/redity/tree/master/docs)
+[Leer mas de la documentación](https://github.com/Aventura-Tech/redity/tree/master/docs)
 
 
 ### Models
@@ -30,9 +30,9 @@ export default redity => {
   }
   
   // Listener
-  redity.onListen = (payload, header, states) => {
+  redity.onListen = (payload, states, header) => {
     if(header.actions.changeMessage){
-      states.message(res)
+      states.message(payload)
     }
   }
   
@@ -42,8 +42,8 @@ export default redity => {
 
 Su propiedad `onListen` será el escuchador de las acciones generados por los dispatchers que se ejecuten en la interfaz.
 `payload`, será el dato que enviemos por el dispatch.
-`header` será en encargado de ofrecerte muchas herramientas de todo el sistema, como las acciones.
 `states`, un objeto de métodos de estados que nos ayudará a cambiar su valor. Los estados son conectados al interfaz.
+`header` será en encargado de ofrecerte muchas herramientas de todo el sistema, como las acciones.
 
 ### Register
 
@@ -54,7 +54,7 @@ Crea un archivo register en la raíz de tu app eh importa tu modelo y registralo
 // src/register.js
 import Redity from 'redity'
 
-import MyModel from './models/example.model.js'
+import MyModel from './models/MyModel.js'
 Redity.register('myModel', MyModel)
 ```
 Importalo a tu app
@@ -64,7 +64,7 @@ import './register'
 // ...
 ```
 
-Puedes registrar varios o reusar el componente.
+> Puedes registrar varios o reusar el componente.
 
 ### Connect
 
@@ -99,22 +99,14 @@ Y listo.
 
 Si generamos un click en el botom que creamos, mandará una acción al modelo que lo capturará el __listener__ donde ahí tu podras manejar la lógica.
 
-#### Algunas configuraciones de Redity
-
-* __dev[Boolean]__, Al activar modo desarrollo se muestra ayuda visual en consola, pero en modo Producción esto no será necesario. por defecto es `true`
-
-```js
-// register.js
-Redity.config.dev = false
-```
-
 ## Documentación
 
-* [Models](https://github.com/ertrii/redity/blob/master/docs/2.%20Models.md)
+* [Models](https://github.com/Aventura-Tech/redity/blob/master/docs/2.%20Models.md)
 * [States](https://github.com/ertrii/redity/blob/master/docs/3.%20States.md)
-* [Dispatcher](https://github.com/ertrii/redity/blob/master/docs/4.%20Dispatcher.md)
-* [Blockcode](https://github.com/ertrii/redity/blob/master/docs/5.%20Blockcode.md)
-* [Question](https://github.com/ertrii/redity/blob/master/docs/6.%20Question.md)
+* [Dispatcher](https://github.com/Aventura-Tech/redity/blob/master/docs/4.%20Dispatcher.md)
+* [Blockcode](https://github.com/Aventura-Tech/redity/blob/master/docs/5.%20Blockcode.md)
+* [Testing](https://github.com/Aventura-Tech/redity/blob/master/docs/6.%20Testing.md)
+* [Question](https://github.com/Aventura-Tech/redity/blob/master/docs/7.%20Question.md)
 
 
 ## Snippets
@@ -125,14 +117,14 @@ Te será de mucha ayuda para agilizar el trabajo, solo cópialo en las opciones 
   "Redity Main": {
     "prefix": "redity:index",
     "body": [
-      "import initial from './initial'",
-      "import listener from './listener'",
+      "import init from './init'",
+      "import listen from './listen'",
       "import fail from './fail'",
       "",
       "export default redity => {",
-      "\tredity.init = initial",
+      "\tredity.init = init",
       "",
-      "\tredity.onListen = listener",
+      "\tredity.onListen = listen",
       "\tredity.onFail = fail",
       "",
       "\treturn redity",
