@@ -136,7 +136,7 @@ export default function (key) {
     // ====================================== //
     states.onListen = (key, payload) => {
       for (const subscribed of subscribes.entries()) {
-        subscribed[1][symSubscriberGenerate](key, payload, states.values())
+        subscribed[1][symSubscriberGenerate](key, payload, states.values(), states.toMethod())
       }
     }
 
@@ -251,7 +251,7 @@ export default function (key) {
    */
   this.subscribe = subscriber => {
     if (!(subscriber instanceof Subscriber)) throw new Error('Require a instance of Subscriber')
-    subscriber[symSubscriberInit](states.values())
+    subscriber[symSubscriberInit](states.values(), states.toMethod())
     subscribes.set(subscriber.key, subscriber)
     return subscriber.key
   }

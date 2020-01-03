@@ -1,17 +1,17 @@
 import { symSubscriberMapStateToProps, symSubscriberGenerate, symSubscriberListener, symSubscriberInit } from './utils/symbols'
 import { IsNotObject, IsNotFunction } from './utils/exceptions'
-import Redity from './index'
+// import Redity from './index'
 
-const globalStates = (keyModel) => {
-  const allModels = Redity.model.all(keyModel)
-  const globalStates = {}
-  for (const key in allModels) {
-    if (allModels[key].config.publicStates) {
-      globalStates[key] = allModels[key].statesValues()
-    }
-  }
-  return globalStates
-}
+// const globalStates = (keyModel) => {
+//   const allModels = Redity.model.all(keyModel)
+//   const globalStates = {}
+//   for (const key in allModels) {
+//     if (allModels[key].config.publicStates) {
+//       globalStates[key] = allModels[key].statesValues()
+//     }
+//   }
+//   return globalStates
+// }
 
 let index = 0
 // ====================================== //
@@ -48,8 +48,8 @@ export default function Subscriber (key = false, mapStateToProps = false, keyMod
 /** Initial subscrirber
  * @param {object} allStates object of states
  */
-Subscriber.prototype[symSubscriberInit] = function (allStates) {
-  const statesDefined = this[symSubscriberMapStateToProps](allStates, globalStates(this.keyModel))
+Subscriber.prototype[symSubscriberInit] = function (allStates, allStatesToMethod) {
+  const statesDefined = this[symSubscriberMapStateToProps](allStates, allStatesToMethod)
   if (typeof statesDefined !== 'object' || Array.isArray(statesDefined)) throw IsNotObject('mapStateToProps')
   this.statesDefined = statesDefined
 }
@@ -69,8 +69,8 @@ Subscriber.prototype.setProps = function (props) {
 // ====================================== //
 // Generate a event                       //
 // ====================================== //
-Subscriber.prototype[symSubscriberGenerate] = function (keyState, nextPayloadState, allStates) {
-  const statesDefined = this[symSubscriberMapStateToProps]({ ...allStates, [keyState]: nextPayloadState }, globalStates(this.keyModel))
+Subscriber.prototype[symSubscriberGenerate] = function (keyState, nextPayloadState, allStates, allStatesToMethod) {
+  const statesDefined = this[symSubscriberMapStateToProps]({ ...allStates, [keyState]: nextPayloadState }, allStatesToMethod)
   if (JSON.stringify(statesDefined) === JSON.stringify(this.statesDefined)) return false
   this.statesDefined = statesDefined
 
