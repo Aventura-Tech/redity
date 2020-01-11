@@ -195,6 +195,10 @@ export default function State (info) {
     this.change.unseen(initValue)
   }
 
+  this.change.initValue = () => {
+    return JSON.parse(reserveValue)
+  }
+
   this.change.before = () => {
     return valueBefore
   }
