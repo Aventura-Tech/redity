@@ -22,27 +22,25 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
       throw RequireKeyModel('connect')
     }
   }
-
-  if (keyModel === false) return connectFaker(keyModel, mapDispatchToProps, mapDispatchToProps)
-
-  // ====================================== //
-  // Getting model by key                   //
-  // ====================================== //
-  const Model = Redity.model.get(keyModel)
-  // ====================================== //
-  // If not found model fatal error         //
-  // ====================================== //
-  if (!Model) {
-    // eslint-disable-next-line no-console
-    console.error(ModelNotFound(`connect "${keyModel}"`))
-    return () => Template('error connect: Model not found in the register', 'error')
-  }
-
   // ====================================== //
   // Next function for component and his    //
   // key (optional)                         //
   // ====================================== //
   return (Component, customizeKeyComponent = false) => {
+    if (keyModel === false) return connectFaker(keyModel, mapDispatchToProps, mapDispatchToProps)
+
+    // ====================================== //
+    // Getting model by key                   //
+    // ====================================== //
+    const Model = Redity.model.get(keyModel)
+    // ====================================== //
+    // If not found model fatal error         //
+    // ====================================== //
+    if (!Model) {
+    // eslint-disable-next-line no-console
+      console.error(ModelNotFound(`connect "${keyModel}"`))
+      return () => Template('error connect: Model not found in the register', 'error')
+    }
     // ====================================== //
     // If not component or null               //
     // ====================================== //
@@ -56,13 +54,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
         globalDispatch[key] = allModels[key].dispatchers
       }
     }
-    // ====================================== //
-    // Seting all dispatcher defined in init  //
-    // to mapStateToProps and getting the     //
-    // dispatcher defined                     //
-    // ====================================== //
-    const dispatchersDefined = mapDispatchToProps(Model.dispatchers, globalDispatch)
-
+    let dispatchersDefined = {}
     // ====================================== //
     // For subcriber                          //
     // ====================================== //
@@ -95,6 +87,12 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
       // Component                              //
       // ====================================== //
       function componentWillMount () {
+        // ====================================== //
+        // Seting all dispatcher defined in init  //
+        // to mapStateToProps and getting the     //
+        // dispatcher defined                     //
+        // ====================================== //
+        dispatchersDefined = mapDispatchToProps(Model.dispatchers, globalDispatch)
         // ====================================== //
         // Creating subscriber for manage states  //
         // ====================================== //
@@ -137,15 +135,13 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
       // Use effect for subscriber              //
       // ====================================== //
       React.useEffect(() => {
+        componentWillMount()
         return () => {
           Model.deleteSubscribe(keyConnect)
           started = false
         }
       }, [])
 
-      // ====================================== //
-      // Render                                 //
-      // ====================================== //
       return (<Component {...dispatchersDefined} {...statesDefinedToProps} {...props} />)
     }
   }
