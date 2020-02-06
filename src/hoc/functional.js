@@ -69,7 +69,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
     // eliminar la subscripción despues de    //
     // destruir el componente.                //
     // ====================================== //
-    let keyConnect = false
+    const keysConnect = []
     // ====================================== //
     // For componentWillMount                 //
     // ====================================== //
@@ -104,7 +104,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
         // ====================================== //
         // Sending subscriber to Model            //
         // ====================================== //
-        keyConnect = Model.subscribe(subscriber)
+        keysConnect.push(Model.subscribe(subscriber))
         // ====================================== //
         // Getting states customize for user      //
         // ====================================== //
@@ -137,7 +137,9 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
       React.useEffect(() => {
         componentWillMount()
         return () => {
-          Model.deleteSubscribe(keyConnect)
+          keysConnect.map(key => {
+            Model.deleteSubscribe(key)
+          })
           started = false
         }
       }, [])
