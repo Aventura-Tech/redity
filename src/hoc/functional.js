@@ -78,6 +78,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
     // Wrapper component connected            //
     // ====================================== //
     return function Wrapper (props) {
+      let isDone = false
       // ====================================== //
       // Creting force render                   //
       // ====================================== //
@@ -96,7 +97,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
         // ====================================== //
         // Creating subscriber for manage states  //
         // ====================================== //
-        subscriber = new Subscriber(customizeKeyComponent, mapStateToProps, keyModel)
+        if (!isDone) subscriber = new Subscriber(customizeKeyComponent, mapStateToProps, keyModel)
         // ====================================== //
         // Seting props for render                //
         // ====================================== //
@@ -124,6 +125,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
       if (!started) {
         componentWillMount()
         started = true
+        isDone = true
       }
 
       // ====================================== //
