@@ -79,10 +79,11 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
     // ====================================== //
     return function Wrapper (props) {
       let isDone = false
-      // ====================================== //
-      // Creting force render                   //
-      // ====================================== //
-      const nextDefinedToProps = React.useState(Date.now())[1]
+      // eslint-disable-next-line camelcase
+      const [current_states, nextDefinedToProps] = React.useState({
+        states: {},
+        date: Date.now()
+      })
       // ====================================== //
       // Simulate componentWillMount of Class   //
       // Component                              //
@@ -114,11 +115,11 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
         // Listen changes of states               //
         // ====================================== //
         subscriber.onListen = states => {
-          statesDefinedToProps = { ...states }
-          // ====================================== //
-          // Force Render                           //
-          // ====================================== //
-          nextDefinedToProps({ ...states })
+          statesDefinedToProps = { ...statesDefinedToProps, ...states }
+          nextDefinedToProps({
+            date: Date.now(),
+            states
+          })
         }
       }
 
@@ -132,6 +133,11 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
       // Seting props for render                //
       // ====================================== //
       subscriber.setProps(props)
+      // statesDefinedToProps = subscriber.getStatesDefined()
+
+      // if (customizeKeyComponent) {
+      //   console.log(customizeKeyComponent, statesDefinedToProps, current_states.states)
+      // }
 
       // ====================================== //
       // Use effect for subscriber              //
@@ -146,7 +152,7 @@ export default function (keyModel, mapStateToProps = false, mapDispatchToProps =
         }
       }, [])
 
-      return (<Component {...dispatchersDefined} {...statesDefinedToProps} {...props} />)
+      return (<Component {...dispatchersDefined} {...statesDefinedToProps} {...current_states.states} {...props} />)
     }
   }
 }
