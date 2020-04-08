@@ -51,10 +51,11 @@ export default function Dispatcher () {
 
     for (const [key, action] of lists.entries()) {
       action.onListen = async (payload, header) => {
-        await listener(payload, header, {
+        const data = await listener(payload, header, {
           ...stateActions,
           [key]: () => {}
         })
+        return data
       }
     }
   }

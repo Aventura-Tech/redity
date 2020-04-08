@@ -183,17 +183,19 @@ describe('Model: Concept', () => {
       if (header.action === 'dispatch1') {
         expect(dispatch1).toEqual(expect.any(Function))
         expect(dispatch2).toBeFalsy()
+        return 'dispatch 1'
       }
 
       if (header.action === 'dispatch2') {
         expect(dispatch1).toBeFalsy()
         expect(dispatch2).toEqual(expect.any(Function))
+        return 'dispatch 2'
       }
     }
 
     model[symModelCreate](false) // creating model
     const { dispatch1, dispatch2 } = model.dispatchers
-    expect(await dispatch1('Any Data')).toBeTruthy()
-    expect(await dispatch2({ name: 'MyName' })).toBeTruthy()
+    expect(await dispatch1('Any Data')).toBe('dispatch 1')
+    expect(await dispatch2({ name: 'MyName' })).toBe('dispatch 2')
   })
 })

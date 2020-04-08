@@ -56,11 +56,11 @@ describe('Action: Logic', () => {
 
     action.onListen = () => count++
 
-    expect(await action.dispatch({})).toBeTruthy()
+    expect(await action.dispatch({})).toBe(0)
     expect(await action.dispatch([])).toBeFalsy()
     expect(await action.dispatch('')).toBeFalsy()
     action.done()
-    expect(action.dispatch('dasd')).toBeTruthy()
+    expect(action.dispatch('dasd'))
     expect(count).toBe(2)
   })
 
@@ -120,7 +120,7 @@ describe('Action: Logic', () => {
     action.onListen = async () => count++
 
     expect(await action.dispatch('String')).toBeFalsy()
-    expect(await action.dispatch({ name: 'Hola Mundo :D' })).toBeTruthy()
+    expect(await action.dispatch({ name: 'Hola Mundo :D' })).toBe(0)
     expect(count).toBe(1)
   })
 })

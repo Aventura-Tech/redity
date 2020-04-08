@@ -221,14 +221,14 @@ export default function (key) {
           // Execute event for onFail and sending   //
           // information necesary                   //
           // ====================================== //
-          await fail(err, states.toMethod(), header)
+          const resErr = await fail(err, states.toMethod(), header)
           // ====================================== //
           // If success then finished blockcode and //
           // also current action                    //
           // ====================================== //
           header.blockcode.end()
           headerDispatcher.done()
-          resolve(true)
+          resolve(resErr)
         })
       })
     }

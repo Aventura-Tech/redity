@@ -103,9 +103,8 @@ function Action (key, defaultValue, options = {}) {
 
     if (this.options.type !== this.types.PASS) this[symActionLoading] = true
 
-    await this[symActionListener](_payload, header)
-
-    return true
+    const data = await this[symActionListener](_payload, header)
+    return data
   }
   this.dispatch.disable = this.disable
   this.dispatch.enable = this.enable
@@ -133,8 +132,9 @@ Action.prototype[symActionResendEvent] = async function () {
   })
   const dataSaved = this.memoryThen[this.memoryThen.length - 1]
   this.memoryThen.length = 0
-  await this[symActionListener](dataSaved, header)
-  this.done()
+  const data = await this[symActionListener](dataSaved, header)
+  this.done(data)
+  return data
 }
 
 /**
