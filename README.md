@@ -1,108 +1,112 @@
 Redity
 ========
 
-Redity es una herramienta que ayuda a separar la lógica de la interfaz.
+Un generador de renders
 
-```
-npm install redity
-```
+## Render and Connect
 
-[Leer mas de la documentación](https://github.com/Aventura-Tech/redity/tree/master/docs)
-
-
-### Models
-
-Los modelos serán los iniciales y los encargados de manejar toda tu lógica.
-Creemos un directorio donde ubicaremos nuestros modelos.
+`render` es un método que genera render a los componentes conectados. Para identificar un connect se requiere de una key. Las key deben ser únicas.
 
 ```js
-// src/models/MyModel.js
-export default redity => {
-  redity.init = initial => {
-    // Init states
-    initial.states = {
-      message: 'Hello word'
-    }
-    
-    initial.dispatchers = {
-      changeMessage: null
-    }
-  }
-  
-  // Listener
-  redity.onListen = (payload, states, header) => {
-    if(header.actions.changeMessage){
-      states.message(payload)
-    }
-  }
-  
-  return redity
+// Controller/index.js
+
+import { render } from 'redity'
+
+export const my_states = {
+  name: ''
+}
+
+export function handleClick() {
+  my_states.name = 'Juan'
+  render('my_key')
 }
 ```
 
-Su propiedad `onListen` será el escuchador de las acciones generados por los dispatchers que se ejecuten en la interfaz.
-`payload`, será el dato que enviemos por el dispatch.
-`states`, un objeto de métodos de estados que nos ayudará a cambiar su valor. Los estados son conectados al interfaz.
-`header` será en encargado de ofrecerte muchas herramientas de todo el sistema, como las acciones.
-
-### Register
-
-Será el encargado de registar todos los modelos que desees crear.
-Crea un archivo register en la raíz de tu app eh importa tu modelo y registralo asignandole un identificador
-
 ```js
-// src/register.js
-import Redity from 'redity'
-
-import MyModel from './models/MyModel.js'
-Redity.register('myModel', MyModel)
-```
-Importalo a tu app
-```js
-// src/app.js
-import './register'
-// ...
-```
-
-> Puedes registrar varios o reusar el componente.
-
-### Connect
-
-Será el encargado de conectar tu componente con el modelo, la conexión pasará todos los estados y acciones que hayas inicializado en el Modelo.
-
-```jsx
+// MyComponent.js
 import React from 'react'
 import { connect } from 'redity'
+import { my_states, handleClick } from './Controller'
 
-function MyComponent({message, changeMessage}){
+function MyComponent(){
   return (
     <div>
-      <p>{ message }</p>
-      <button onClick={() => changeMessage('This is working :D')} >Click me! :D</button>
+      <p>{ my_states.name }</p>
+      <button onClick={handleClick} >Click me! :D</button>
     </div>
   )
 }
 
-const mapStateToProps = states => ({
-  message: states.messsage
-})
-
-const mapDispatchToProps = dispatch => ({
-  changeMessage: dispatch.changeMessage
-})
-
-export default connect('myModel', mapStateToProps, mapDispatchToProps)(MyComponent)
-
+export default connect('my_key')(MyComponent)
 ```
 
-Y listo.
+## Capsule
 
-Si generamos un click en el botom que creamos, mandará una acción al modelo que lo capturará el __listener__ donde ahí tu podras manejar la lógica.
+Es un componente que encapsula cierta sección del componente en donde se espera realizar un render. Una capsula requiere de una `key`
 
-## Documentación
 
-* [Models](https://github.com/Aventura-Tech/redity/blob/master/docs/2.%20Models.md)
-* [States](https://github.com/ertrii/redity/blob/master/docs/3.%20States.md)
-* [Dispatcher](https://github.com/Aventura-Tech/redity/blob/master/docs/4.%20Dispatcher.md)
-* [Testing](https://github.com/Aventura-Tech/redity/blob/master/docs/6.%20Testing.md)
-* [Question](https://github.com/Aventura-Tech/redity/blob/master/docs/7.%20Question.md)
+```js
+import React from 'react'
+import { Capsule } from 'redity'
+import { my_states, handleClick } from './Controller'
+
+export default function MyComponent(){
+  return (
+    <div>
+      <Capsule keyName='my_key'>
+        {
+          () => (
+            <p>{ my_states.name }</p>
+            <button onClick={handleClick} >Click me! :D</button>
+          )
+        }      
+      </Capsule>
+    </div>
+  )
+}
+```
+
+Es otra opción en vez de connect.
+
+
+## getProps
+
+Es una función que retorna los props pasados por el componente conectado. Requiere de la key del componente conectado.
+
+```js
+<MyComponent my_prop='prop'>
+```
+```js
+// Controller/index.js
+import { getProps } from 'redity'
+
+
+function getPropsOfMyComponent () {
+  getProps('my_key')
+}
+```
+
+> Tenga en claro que solo funciona para los componentes conectados (`connect`) y encapsulado (`capsule`).
+
+## States
+
+Es una clase encargado de manejar estados
+
+```js
+const states = new Redity.States({
+ name: 'Juan',
+ lastname: 'Ramirez'
+})
+
+states.val // { name, lastname }
+states.val.name = 'Marco'
+states.method // { name(any), lastname(any) } Retorna los estados en modo función
+states.method.lastname('Ramos')
+states.hasChange() // true|false
+states.hasChange('name') // true|false. Tambien es posible especificar el campo que tuvo cambio
+states.update({ name: 'Luis' })
+states.whoDataChanges() // { name: 'Luis' } Retorna solo los campos que tuvieron cambios
+states.init() // inicializa al dato inicial
+states.init({ name: 'Ricardo', lastname: 'Ramos' }) // actualiza el dato inicial.
+states.init(states.data_initial) // data_initial mantiene los valores del constructor
+```
